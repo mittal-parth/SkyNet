@@ -1,4 +1,4 @@
-import { useState } from "react";
+// import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import { invoke } from "@tauri-apps/api/tauri";
 import "./App.css";
@@ -9,6 +9,7 @@ import {
   createEncoder,
   waitForRemotePeer,
 } from "@waku/sdk";
+import { useEffect, useState, useCallback } from "react";
 
 function App() {
   const [name, setName] = useState("");
@@ -26,12 +27,13 @@ function App() {
       setS(res);
     });
   }
+
   useEffect(() => {
     if (!waku || waku.status != "Ready") return;
     if (issender == 1) {
-      start(initial);
+      send(initial);
     } else {
-      rec(final);
+      recieve(final);
     }
   }, [n]);
 
@@ -39,11 +41,11 @@ function App() {
     let m = messages[0];
     console.log(m, "hello");
     if ((m === undefined || m == []) && issender === 1) {
-      start(initial);
+      send(initial);
       return;
     }
     if ((m === undefined || m == []) && issender === 0) {
-      rec(final);
+      recieve(final);
       return;
     }
     if (issender === 1) {
@@ -62,10 +64,10 @@ function App() {
       setFinal(final + 1 + s);
       setN(m.n);
     } else if (m.n == n + 1 && m.server == 1 && m.n == 0) {
-      setInitial(m.initial, () => rec(final + 1));
+      setInitial(m.initial, () => recieve(final + 1));
       setFinal(final + 1);
     } else {
-      rec(final);
+      recieve(final);
     }
     console.log(message);
   }
@@ -135,7 +137,7 @@ function App() {
     sendMessage(message, waku).then(() => console.log("Message sent start"));
   };
 
-  const recive = (val) => {
+  const recieve = (val) => {
     let message = {
       initial: initial,
       final: val,
@@ -147,39 +149,30 @@ function App() {
   };
 
   return (
-    <div className="container">
-      <h1>Welcome to Tauri!</h1>
+    <div className="App">
+      <header className="App-header">
+        <p>{wakuStatus}</p>
+        {/* <button onClick={test}>Test</button> */}
 
-      <div className="row">
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-
-      <p>{greetMsg}</p>
+        <button
+          onClick={() => {
+            setIsSender(1);
+            setInitial(1);
+            setN(1);
+            // start(1);
+          }}
+          disabled={wakuStatus !== "Ready"}
+        >
+          Sender
+        </button>
+        <button onClick={() => recieve(1)} disabled={wakuStatus !== "Ready"}>
+          Receiver
+        </button>
+        <p>Initial: {initial}</p>
+        <p> Final: {final}</p>
+        <p>Epochs: {n}</p>
+        <p>Is Server: {issender}</p>
+      </header>
     </div>
   );
 }
