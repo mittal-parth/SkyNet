@@ -2,8 +2,10 @@ import React from 'react';
 import DataCard from '../components/DataCard';
 import { IoIosAddCircleOutline } from "react-icons/io";
 
-
+import {Routes, Route, useNavigate} from 'react-router-dom';
 const DataMarket = ()=> {
+    const navigate = useNavigate(); 
+    
     const tempDataList = [
         {
           "dataname": "Sensor",
@@ -71,7 +73,7 @@ const DataMarket = ()=> {
         <div className='font-poppins mr-2 text-4xl'>
         My data
       </div>
-      <IoIosAddCircleOutline size={40} color='green'/>
+      <a onClick={() => navigate('/uploaddata')}><IoIosAddCircleOutline size={40} color='green'/></a>
         </div>
         <div className='flex flex-wrap mx-10 my-10'>
                 {
