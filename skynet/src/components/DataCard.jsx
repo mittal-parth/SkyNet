@@ -1,4 +1,4 @@
-import data from "../assets/data.png";
+
 import { SiSolidity } from "react-icons/si";
 import { IoIosAddCircleOutline } from "react-icons/io";
 export default function DataCard({ data , isOwned }) {
