@@ -2,10 +2,13 @@ import React from 'react';
 import DataCard from '../components/DataCard';
 import ModelCard from '../components/ModelCard';
 import { IoIosAddCircleOutline } from "react-icons/io";
+import {Routes, Route, useNavigate} from 'react-router-dom';
 
 
 const ModelMarket = ()=> {
-    const tempDataList = [
+  const navigate = useNavigate(); 
+
+  const tempDataList = [
         {
           "modelname": "Linear Regression",
           "description": "This is a sensor data of a car",
@@ -67,7 +70,7 @@ const ModelMarket = ()=> {
         <div className='font-poppins mr-2 text-4xl'>
         My models
       </div>
-      <IoIosAddCircleOutline size={40} color='green'/>
+      <a onClick={() => navigate('/uploadmodel')}><IoIosAddCircleOutline size={40} color='green'/></a>
         </div>
         <div className='flex flex-wrap mx-10 my-10'>
                 {
