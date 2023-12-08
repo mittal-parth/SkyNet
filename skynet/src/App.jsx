@@ -1,218 +1,233 @@
-import { useEffect, useState } from 'react'
-import { BrowserProvider, Eip1193Provider, ethers } from 'ethers'
-import { Box, Button, Divider, Grid, Typography } from '@mui/material'
-import { EthHashInfo } from '@safe-global/safe-react-components'
-import Safe, { EthersAdapter } from '@safe-global/protocol-kit'
-import AppBar from './AppBar'
+import { useEffect, useState } from "react";
+import { BrowserProvider, ethers } from "ethers";
+import { Box, Button, Divider, Grid, Typography } from "@mui/material";
+import { EthHashInfo } from "@safe-global/safe-react-components";
+import Safe, { EthersAdapter } from "@safe-global/protocol-kit";
+import AppBar from "./AppBar";
+import { SafeAuthPack } from "@safe-global/auth-kit";
 import {
-  SafeAuthPack,
-} from '@safe-global/auth-kit'
-import { getSafeTxV4TypedData, getTypedData, getV3TypedData } from './safeConstants'
-
+  getSafeTxV4TypedData,
+  getTypedData,
+  getV3TypedData,
+} from "./safeConstants";
+import { invoke } from "@tauri-apps/api/tauri";
 function App() {
-  const [safeAuthPack, setSafeAuthPack] = useState()
-  const [isAuthenticated, setIsAuthenticated] = useState(!!safeAuthPack?.isAuthenticated)
-  const [safeAuthSignInResponse, setSafeAuthSignInResponse] = useState(
-    null
-  )
-  const [userInfo, setUserInfo] = useState(null)
-  const [chainId, setChainId] = useState()
-  const [balance, setBalance] = useState()
-  const [consoleMessage, setConsoleMessage] = useState('')
-  const [consoleTitle, setConsoleTitle] = useState('')
-  const [provider, setProvider] = useState()
+  const [safeAuthPack, setSafeAuthPack] = useState();
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    !!safeAuthPack?.isAuthenticated
+  );
+  const [safeAuthSignInResponse, setSafeAuthSignInResponse] = useState(null);
+  const [userInfo, setUserInfo] = useState(null);
+  const [chainId, setChainId] = useState();
+  const [balance, setBalance] = useState();
+  const [consoleMessage, setConsoleMessage] = useState("");
+  const [consoleTitle, setConsoleTitle] = useState("");
+  const [provider, setProvider] = useState();
 
   useEffect(() => {
     // @ts-expect-error - Missing globals
-    const params = new URL(window.document.location).searchParams
-    const chainId = params.get('chainId')
+    const params = new URL(window.document.location).searchParams;
+    const chainId = params.get("chainId");
 
-    ;(async () => {
+    (async () => {
       const options = {
         enableLogging: true,
-        buildEnv: 'production',
+        buildEnv: "production",
         chainConfig: {
-          chainId: chainId || '0x64',
-          rpcTarget: 'https://gnosis.drpc.org'
-        }
-      }
+          chainId: chainId || "0x64",
+          rpcTarget: "https://gnosis.drpc.org",
+        },
+      };
 
-      const authPack = new SafeAuthPack()
+      const authPack = new SafeAuthPack();
 
-      await authPack.init(options)
+      await authPack.init(options);
 
-      console.log('safeAuthPack:safeEmbed', authPack.safeAuthEmbed)
+      console.log("safeAuthPack:safeEmbed", authPack.safeAuthEmbed);
 
-      setSafeAuthPack(authPack)
+      setSafeAuthPack(authPack);
 
-      authPack.subscribe('accountsChanged', async (accounts) => {
-        console.log('safeAuthPack:accountsChanged', accounts, authPack.isAuthenticated)
+      authPack.subscribe("accountsChanged", async (accounts) => {
+        console.log(
+          "safeAuthPack:accountsChanged",
+          accounts,
+          authPack.isAuthenticated
+        );
         if (authPack.isAuthenticated) {
-          const signInInfo = await authPack?.signIn()
+          const signInInfo = await authPack?.signIn();
 
-          setSafeAuthSignInResponse(signInInfo)
-          setIsAuthenticated(true)
+          setSafeAuthSignInResponse(signInInfo);
+          setIsAuthenticated(true);
         }
-      })
+      });
 
-      authPack.subscribe('chainChanged', (eventData) =>
-        console.log('safeAuthPack:chainChanged', eventData)
-      )
-    })()
-  }, [])
+      authPack.subscribe("chainChanged", (eventData) =>
+        console.log("safeAuthPack:chainChanged", eventData)
+      );
+    })();
+  }, []);
 
   useEffect(() => {
-    if (!safeAuthPack || !isAuthenticated) return
-    ;(async () => {
-      const web3Provider = safeAuthPack.getProvider()
-      const userInfo = await safeAuthPack.getUserInfo()
+    if (!safeAuthPack || !isAuthenticated) return;
+    (async () => {
+      const web3Provider = safeAuthPack.getProvider();
+      const userInfo = await safeAuthPack.getUserInfo();
 
-      setUserInfo(userInfo)
+      setUserInfo(userInfo);
 
       if (web3Provider) {
-        const provider = new BrowserProvider(safeAuthPack.getProvider())
-        const signer = await provider.getSigner()
-        const signerAddress = await signer.getAddress()
+        const provider = new BrowserProvider(safeAuthPack.getProvider());
+        const signer = await provider.getSigner();
+        const signerAddress = await signer.getAddress();
 
-        setChainId((await provider?.getNetwork()).chainId.toString())
+        setChainId((await provider?.getNetwork()).chainId.toString());
         setBalance(
-          ethers.formatEther((await provider.getBalance(signerAddress)))
-        )
-        setProvider(provider)
+          ethers.formatEther(await provider.getBalance(signerAddress))
+        );
+        setProvider(provider);
       }
-    })()
-  }, [isAuthenticated])
+    })();
+  }, [isAuthenticated]);
 
   const login = async () => {
-    const signInInfo = await safeAuthPack?.signIn()
+    // invoke("start_server");
+    const signInInfo = await safeAuthPack?.signIn();
 
-    setSafeAuthSignInResponse(signInInfo)
-    setIsAuthenticated(true)
-  }
+    setSafeAuthSignInResponse(signInInfo);
+    setIsAuthenticated(true);
+  };
 
   const logout = async () => {
-    await safeAuthPack?.signOut()
+    await safeAuthPack?.signOut();
 
-    setSafeAuthSignInResponse(null)
-  }
+    setSafeAuthSignInResponse(null);
+  };
 
   const getUserInfo = async () => {
-    const userInfo = await safeAuthPack?.getUserInfo()
+    const userInfo = await safeAuthPack?.getUserInfo();
 
-    uiConsole('User Info', userInfo)
-  }
+    uiConsole("User Info", userInfo);
+  };
 
   const getAccounts = async () => {
-    const accounts = await provider?.send('eth_accounts', [])
+    const accounts = await provider?.send("eth_accounts", []);
 
-    uiConsole('Accounts', accounts)
-  }
+    uiConsole("Accounts", accounts);
+  };
 
   const getChainId = async () => {
-    const chainId = await provider?.send('eth_chainId', [])
+    const chainId = await provider?.send("eth_chainId", []);
 
-    uiConsole('ChainId', chainId)
-  }
+    uiConsole("ChainId", chainId);
+  };
 
   const signAndExecuteSafeTx = async (index) => {
-    const safeAddress = safeAuthSignInResponse?.safes?.[index] || '0x'
+    const safeAddress = safeAuthSignInResponse?.safes?.[index] || "0x";
 
     // Wrap Web3Auth provider with ethers
-    const provider = new BrowserProvider(safeAuthPack?.getProvider())
-    const signer = await provider.getSigner()
+    const provider = new BrowserProvider(safeAuthPack?.getProvider());
+    const signer = await provider.getSigner();
     const ethAdapter = new EthersAdapter({
       ethers,
-      signerOrProvider: signer
-    })
+      signerOrProvider: signer,
+    });
     const protocolKit = await Safe.create({
       safeAddress,
-      ethAdapter
-    })
+      ethAdapter,
+    });
 
     // Create transaction
     let tx = await protocolKit.createTransaction({
       transactions: [
         {
-          to: ethers.getAddress(safeAuthSignInResponse?.eoa || '0x'),
-          data: '0x',
-          value: ethers.parseUnits('0.0001', 'ether').toString()
-        }
-      ]
-    })
+          to: ethers.getAddress(safeAuthSignInResponse?.eoa || "0x"),
+          data: "0x",
+          value: ethers.parseUnits("0.0001", "ether").toString(),
+        },
+      ],
+    });
 
     // Sign transaction. Not necessary to execute the transaction if the threshold is one
     // but kept to test the sign transaction modal
-    tx = await protocolKit.signTransaction(tx)
+    tx = await protocolKit.signTransaction(tx);
 
     // Execute transaction
-    const txResult = await protocolKit.executeTransaction(tx)
-    uiConsole('Safe Transaction Result', txResult)
-  }
+    const txResult = await protocolKit.executeTransaction(tx);
+    uiConsole("Safe Transaction Result", txResult);
+  };
 
   const signMessage = async (data, method) => {
-    let signedMessage
+    let signedMessage;
 
     const params = {
       data,
-      from: safeAuthSignInResponse?.eoa
-    }
+      from: safeAuthSignInResponse?.eoa,
+    };
 
-    if (method === 'eth_signTypedData') {
-      signedMessage = await provider?.send(method, [params.data, params.from])
-    } else if (method === 'eth_signTypedData_v3' || method === 'eth_signTypedData_v4') {
-      signedMessage = await provider?.send(method, [params.from, JSON.stringify(params.data)])
+    if (method === "eth_signTypedData") {
+      signedMessage = await provider?.send(method, [params.data, params.from]);
+    } else if (
+      method === "eth_signTypedData_v3" ||
+      method === "eth_signTypedData_v4"
+    ) {
+      signedMessage = await provider?.send(method, [
+        params.from,
+        JSON.stringify(params.data),
+      ]);
     } else {
-      signedMessage = await (await provider?.getSigner())?.signMessage(data)
+      signedMessage = await (await provider?.getSigner())?.signMessage(data);
     }
 
-    uiConsole('Signed Message', signedMessage)
-  }
+    uiConsole("Signed Message", signedMessage);
+  };
 
   const sendTransaction = async () => {
-    const tx = await provider?.send('eth_sendTransaction', [
+    const tx = await provider?.send("eth_sendTransaction", [
       {
         from: safeAuthSignInResponse?.eoa,
         to: safeAuthSignInResponse?.eoa,
-        value: ethers.parseUnits('0.00001', 'ether').toString(),
-        gasLimit: 21000
-      }
-    ])
+        value: ethers.parseUnits("0.00001", "ether").toString(),
+        gasLimit: 21000,
+      },
+    ]);
 
-    uiConsole('Transaction Response', tx)
-  }
+    uiConsole("Transaction Response", tx);
+  };
 
   const switchChain = async () => {
-    const result = await provider?.send('wallet_switchEthereumChain', [
+    const result = await provider?.send("wallet_switchEthereumChain", [
       {
-        chainId: '0x1'
-      }
-    ])
+        chainId: "0x1",
+      },
+    ]);
 
-    uiConsole('Switch Chain', result)
-  }
+    uiConsole("Switch Chain", result);
+  };
 
   const addChain = async () => {
-    const result = await provider?.send('wallet_addEthereumChain', [
+    const result = await provider?.send("wallet_addEthereumChain", [
       {
-        chainId: '0x2105',
-        chainName: 'Base',
+        chainId: "0x2105",
+        chainName: "Base",
         nativeCurrency: {
-          name: 'ETH',
-          symbol: 'ETH',
-          decimals: 18
+          name: "ETH",
+          symbol: "ETH",
+          decimals: 18,
         },
-        rpcUrls: ['https://base.publicnode.com'],
-        blockExplorerUrls: ['https://basescan.org/']
-      }
-    ])
+        rpcUrls: ["https://base.publicnode.com"],
+        blockExplorerUrls: ["https://basescan.org/"],
+      },
+    ]);
 
-    uiConsole(`Add chain`, result)
-  }
+    uiConsole(`Add chain`, result);
+  };
 
   const uiConsole = (title, message) => {
-    setConsoleTitle(title)
-    setConsoleMessage(typeof message === 'string' ? message : JSON.stringify(message, null, 2))
-  }
+    setConsoleTitle(title);
+    setConsoleMessage(
+      typeof message === "string" ? message : JSON.stringify(message, null, 2)
+    );
+  };
 
   return (
     <>
@@ -229,16 +244,25 @@ function App() {
               Signer
             </Typography>
             <Divider sx={{ my: 3 }} />
-            <EthHashInfo address={safeAuthSignInResponse.eoa} showCopyButton showPrefix={false} />
+            <EthHashInfo
+              address={safeAuthSignInResponse.eoa}
+              showCopyButton
+              showPrefix={false}
+            />
             <Divider sx={{ my: 2 }} />
             <Typography variant="h4" color="primary" fontWeight="bold">
-              Chain{' '}
+              Chain{" "}
               <Typography component="span" color="secondary" fontSize="1.45rem">
                 {chainId}
               </Typography>
             </Typography>
-            <Typography variant="h4" color="primary" sx={{ my: 1 }} fontWeight="bold">
-              Balance{' '}
+            <Typography
+              variant="h4"
+              color="primary"
+              sx={{ my: 1 }}
+              fontWeight="bold"
+            >
+              Balance{" "}
               <Typography component="span" color="secondary" fontSize="1.45rem">
                 {balance}
               </Typography>
@@ -276,7 +300,7 @@ function App() {
               variant="contained"
               color="primary"
               sx={{ my: 1 }}
-              onClick={() => signMessage('Hello World', 'personal_sign')}
+              onClick={() => signMessage("Hello World", "personal_sign")}
             >
               personal_sign
             </Button>
@@ -287,8 +311,8 @@ function App() {
               sx={{ my: 1 }}
               onClick={() =>
                 signMessage(
-                  '0x47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad',
-                  'eth_sign'
+                  "0x47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad",
+                  "eth_sign"
                 )
               }
             >
@@ -299,7 +323,7 @@ function App() {
               variant="contained"
               color="primary"
               sx={{ my: 1 }}
-              onClick={() => signMessage(getTypedData(), 'eth_signTypedData')}
+              onClick={() => signMessage(getTypedData(), "eth_signTypedData")}
             >
               eth_signTypedData
             </Button>
@@ -308,7 +332,12 @@ function App() {
               variant="contained"
               color="primary"
               sx={{ my: 1 }}
-              onClick={() => signMessage(getV3TypedData(chainId || ''), 'eth_signTypedData_v3')}
+              onClick={() =>
+                signMessage(
+                  getV3TypedData(chainId || ""),
+                  "eth_signTypedData_v3"
+                )
+              }
             >
               eth_signTypedData_v3
             </Button>
@@ -318,7 +347,10 @@ function App() {
               color="primary"
               sx={{ my: 1 }}
               onClick={() =>
-                signMessage(getSafeTxV4TypedData(chainId || ''), 'eth_signTypedData_v4')
+                signMessage(
+                  getSafeTxV4TypedData(chainId || ""),
+                  "eth_signTypedData_v4"
+                )
               }
             >
               eth_signTypedData_v4
@@ -341,7 +373,7 @@ function App() {
               onClick={() => switchChain()}
             >
               wallet_switchEthereumChain
-            </Button>{' '}
+            </Button>{" "}
             <Button
               variant="outlined"
               fullWidth
@@ -362,7 +394,11 @@ function App() {
                 safeAuthSignInResponse?.safes?.map((safe, index) => (
                   <>
                     <Box sx={{ my: 3 }} key={index}>
-                      <EthHashInfo address={safe} showCopyButton shortAddress={true} />
+                      <EthHashInfo
+                        address={safe}
+                        showCopyButton
+                        shortAddress={true}
+                      />
                     </Box>
                     <Button
                       variant="contained"
@@ -393,7 +429,7 @@ function App() {
             <Typography
               variant="body1"
               color="secondary"
-              sx={{ mt: 2, overflowWrap: 'break-word' }}
+              sx={{ mt: 2, overflowWrap: "break-word" }}
             >
               {consoleMessage}
             </Typography>
@@ -401,7 +437,7 @@ function App() {
         </Grid>
       )}
     </>
-  )
+  );
 }
 
-export default App
+export default App;
