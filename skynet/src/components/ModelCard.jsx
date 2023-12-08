@@ -1,31 +1,40 @@
 import { SiSolidity } from "react-icons/si";
-export default function ModelCard() {
-  const tempData = {
-    "modelname" : "Linear Regression",
-    "description" : "This is a linear regression model",
-    "price" : 100,
-    "isActive" : false  
-  }
-    return (
-      
-
-<div className={`max-w-sm p-6 bg-white border-l-4 ${tempData.isActive ? 'border-green-700' :'border-gray-400' } rounded-lg border-gray-200 shadow-xl dark:bg-gray-800 dark:border-gray-700`}>
-    <div className="flex justify-between items-center">
-
-        <h5 className="mb-2 text-2xl  font-semibold tracking-tight text-gray-900 dark:text-white font-poppins">{tempData.modelname}</h5>
-        <div className='flex items-center'>
+export default function ModelCard({ data, isOwned }) {
+  const tempData = data;
+  return (
+    <div
+      className={` flex-col justify-between mx-3 my-3 max-w-sm p-6 bg-white border-l-4 
+      } rounded-lg border-gray-200 shadow-xl dark:bg-gray-800 dark:border-gray-700`}
+    >
+      <div className="flex justify-between items-center">
+        <h5 className="mb-2 text-2xl mr-10 font-semibold tracking-tight text-gray-900 dark:text-white font-poppins">
+          {tempData.modelname}
+        </h5>
+        <div className="flex items-center">
           <SiSolidity />
-          <div className='text-xl font-semibold pb-1 pr-1'>
-          {tempData.price}
+          <div className="text-xl font-semibold pb-1 pr-1">
+            {tempData.price}
           </div>
         </div>
+      </div>
+      <p className="mb-3 font-normal text-gray-500 dark:text-gray-400 font-poppins">
+        {tempData.description}
+      </p>
+      <div>
+        {!isOwned ? (
+          <div
+            className={` px-2 py-1  my-1 text-sm font-medium font-poppins text-center text-white ${
+              !data.isActive ? "bg-green-600" : "bg-red-700"
+            } rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800`}
+          >
+            {data.isActive ? "Unlist" : "List"}
+          </div>
+        ) : (
+          <div className=" px-2 py-1  my-1 text-sm font-medium font-poppins text-center text-white bg-green-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+            Buy
+          </div>
+        )}
+      </div>
     </div>
-    <p className="mb-3 font-normal text-gray-500 dark:text-gray-400 font-poppins">{tempData.description}</p>
-    <div>
-   
-    
-    </div>
-</div>
-
-    );
-  }
+  );
+}

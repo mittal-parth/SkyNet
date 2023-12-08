@@ -1,43 +1,39 @@
 import React from 'react';
 import DataCard from '../components/DataCard';
+import ModelCard from '../components/ModelCard';
 import { IoIosAddCircleOutline } from "react-icons/io";
 
 
-const DataMarket = ()=> {
+const ModelMarket = ()=> {
     const tempDataList = [
         {
-          "dataname": "Sensor",
+          "modelname": "Linear Regression",
           "description": "This is a sensor data of a car",
           "price": 100,
-          "columns": ["time", "speed", "rpm", "fuellong", "temp", "time", "speedlong", "rpmlong"],
           "isActive": true
         },
         {
-          "dataname": "Flowers",
+          "modelname": "Flowers",
           "description": "This is a collection of all flowers",
           "price": 1000,
-          "columns": ["colour", "size", "type"],
           "isActive": false
         },
         {
-          "dataname": "Weather",
+          "modelname": "Weather",
           "description": "This is weather data",
           "price": 500,
-          "columns": ["temperature", "humidity", "wind_speed", "precipitation"],
           "isActive": true
         },
         {
-          "dataname": "Stocks",
+          "modelname": "Stocks",
           "description": "Stock market data",
           "price": 800,
-          "columns": ["symbol", "price", "volume", "change_percentage"],
           "isActive": false
         },
         {
-          "dataname": "SocialMedia",
+          "modelname": "SocialMedia",
           "description": "Social media activity",
           "price": 300,
-          "columns": ["user_id", "post_count", "followers", "likes"],
           "isActive": true
         }
       ];
@@ -48,7 +44,7 @@ const DataMarket = ()=> {
         <div className='flex items-center'>
 
         <div className='font-poppins mr-2 text-4xl'>
-        Data Market
+        Models Market
       </div>
       <IoIosAddCircleOutline size={40} color='green'/>
         </div>
@@ -56,7 +52,7 @@ const DataMarket = ()=> {
                 {
                     tempDataList.map((data) => {
                         return (
-                            <DataCard data={data} isOwned={true}/>
+                            <ModelCard data={data} isOwned={true}/>
                         )
                     })
                 }
@@ -69,7 +65,7 @@ const DataMarket = ()=> {
             <div className='flex items-center'>
 
         <div className='font-poppins mr-2 text-4xl'>
-        My data
+        My models
       </div>
       <IoIosAddCircleOutline size={40} color='green'/>
         </div>
@@ -77,7 +73,7 @@ const DataMarket = ()=> {
                 {
                     tempDataList.map((data) => {
                         return (
-                            <DataCard data={data} isOwned={false}/>
+                            <ModelCard data={data} isOwned={false}/>
                         )
                     })
                 }
@@ -87,4 +83,4 @@ const DataMarket = ()=> {
     );
 }
 
-export default DataMarket;
+export default ModelMarket;
