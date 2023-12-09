@@ -10,7 +10,8 @@ import Steps from "./Steps";
 import Hero from "./Hero";
 import GetStarted from './GetStarted'
 import StepCard from "./StepCard";
-
+import DataRow from "./DataRow";
+import ModelRow from "./ModelRow";
 export {
   Navbar,
   Billing,
@@ -23,5 +24,7 @@ export {
   Steps,
   Hero,
   GetStarted,
-  StepCard
+  StepCard,
+  DataRow,
+  ModelRow
 };

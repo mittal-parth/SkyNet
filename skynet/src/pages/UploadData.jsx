@@ -29,6 +29,7 @@ export default function UploadData() {
       args: [dataDetails.title,fileHash,dataDetails.description,true,dataDetails.price],
       from: walletClient.account.address
     })
+    setdataHash(fileHash)
     };
 
   

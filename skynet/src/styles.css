@@ -25,6 +25,13 @@
   );
   --custom-gradient: linear-gradient(
     144.39deg,
+    #ea1111 -278.56%,
+    #df843f -28.47%,
+    #96c45f -68.47%,
+    #0d972b 91.61%
+  );
+  --custom-gradient-2: linear-gradient(
+    144.39deg,
     #ffffff -278.56%,
     #3fc2df -18.47%,
     #b571d5 -78.47%,
@@ -148,15 +155,46 @@ button {
   text-fill-color: transparent;
 }
 
+.text-gradient-2 {
+  background: radial-gradient(
+    64.18% 64.18% at 71.16% 60.69%,
+    #ff0000 0.89%,
+    #fd4001 17.23%,
+    #f05603 42.04%,
+    #e38f08 55.12%,
+    #d4a50a 71.54%,
+    #cbe104 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+}
+.text-gradient-3 {
+  background: radial-gradient(
+    64.18% 64.18% at 71.16% 60.69%,
+    #c21414 0.89%,
+    #e04b0b 17.23%,
+    #c15b39 42.04%,
+    #d38609 55.12%,
+    #d4a50a 71.54%,
+    #dddd0c 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+}
+
 .bg-blue-gradient {
   background: linear-gradient(
     157.81deg,
     #def9fa -43.27%,
-    #bef3f5 -21.24%,  
-    #d6d9d9 12.19%,
-    #e7eaea 29.82%,
-    #ebebeb 51.94%,
-    #eb1308 90.29%
+    #c5e21d -21.24%,  
+    #daa726 12.19%,
+    #d18440 29.82%,
+    #d87c1a 51.94%,
+    #cb1006 90.29%
   );
 }
 
@@ -250,6 +288,9 @@ button {
 
 .column-card {
   background: var(--custom-gradient);
+}
+.buy-card {
+  background: var(--custom-gradient-2);
 }
 .blue__gradient {
   background: linear-gradient(180deg, rgba(188, 165, 255, 0) 0%, #214d76 100%);

@@ -42,9 +42,9 @@ export default function DataCard({ dataObject, isOwner }) {
         </p>
         <div>
           <div>
-            {dataObject.columns.map((column) => {
+            {dataObject.columns.map((column,index) => {
               return (
-                <div className="inline-flex  items-center px-2 py-1 mr-2 my-1 text-sm font-medium font-poppins text-center text-white  rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300  column-card ">
+                <div key={index} className="inline-flex  items-center px-2 py-1 mr-2 my-1 text-sm font-medium font-poppins text-center text-white  rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 column-card  ">
                   {column}
                 </div>
               );
@@ -61,7 +61,7 @@ export default function DataCard({ dataObject, isOwner }) {
           {dataObject.isForSale ? "Unlist" : "List"}
         </div>
       ) : (
-        <a onClick={!isLoading? buyData: ()=>{console.log("Loading")}}><div className=" px-2 py-1  mt-6 text-sm font-medium font-poppins text-center text-white bg-green-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+        <a onClick={!isLoading? buyData: ()=>{console.log("Loading")}}><div className=" px-2 py-1 buy-card mt-6 text-sm font-medium font-poppins text-center text-white bg-green-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
           Buy
         </div></a>
       )}

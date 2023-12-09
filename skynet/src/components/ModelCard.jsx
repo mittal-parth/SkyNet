@@ -31,7 +31,7 @@ export default function ModelCard({ modelObject }) {
             {modelObject.isForSale ? "Unlist" : "List"}
           </div>
         ) : (
-          <div className=" px-2 py-1  my-1 text-sm font-medium font-poppins text-center text-white bg-green-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+          <div className=" px-2 py-1 buy-card my-1 text-sm font-medium font-poppins text-center text-white bg-green-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
             Buy
           </div>
         )}
