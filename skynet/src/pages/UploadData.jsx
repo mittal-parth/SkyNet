@@ -2,23 +2,11 @@ import React, { useState } from "react";
 import Form from "../components/Form";
 import { useWalletClient, useSignMessage,useContractWrite } from "wagmi";
 import FormPage from "../components/FormPage";
-import lighthouse from "@lighthouse-web3/sdk"
 import { CONTRACT_ADDRESS} from "../config";
 import ABI from "../constants/skynetabi.json";
 const skynetABI=ABI.abi;
 export default function UploadData() {
-  // const signAuthMessage = async () => {
-  //   const signerAddress = walletClient;
-  //   const { message } = (await lighthouse.getAuthMessage(signerAddress)).data;
-  //   const signature = useSignMessage(message);
-  //   return { signature, signerAddress };
-  // };
 
-  // const progressCallback = (progressData) => {
-  //   let percentageDone =
-  //     100 - (progressData?.total / progressData?.uploaded)?.toFixed(2);
-  //   console.log(percentageDone);
-  // };
   const [dataDetails, setDataDetails] = useState({});
   const [file, setFile] = useState();
   const { data: walletClient} = useWalletClient();

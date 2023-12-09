@@ -38,7 +38,7 @@ const DataMarket = () => {
         console.log("wallet address is",walletClient.account.address)
 
         if(walletClient && element.owner==walletClient.account.address){
-          element.columns =["time","speed","rpm","fuellong","temp","time","speedlong","rpmlong"];
+          element.columns = ["time","speed","rpm","fuellong","temp","time","speedlong","rpmlong"];
           ownerDataObjects ? setOwnerDataObjects([...ownerDataObjects,element]) : setOwnerDataObjects([element])
 
         }else{
@@ -85,7 +85,6 @@ const DataMarket = () => {
       </div>
       <div className="flex flex-wrap mx-10 my-10">
         {ownerDataObjects && ownerDataObjects.length != 0 ?<div> {ownerDataObjects.map((element,index) => {
-          console.log("lenght ",ownerDataObjects.length)
           return <DataCard dataObject={element} isOwner={true} key={index}/>
         }) }</div>: <div className="font-poppins mr-2 text-4xl text-white">No data found</div>}
       </div>

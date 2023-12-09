@@ -47,8 +47,8 @@ export default function Form({walletClient, handleSubmit, fields, setData, data 
   }
 
   return (
-    <div className="mb-6 font-comfortaa w-full data-card p-10 rounded-xl">
-      <form onSubmit={handleSubmit}>
+    <div className="mb-6 font-comfortaa w-full data-card p-10 rounded-xl ">
+      <form  onSubmit={handleSubmit}>
         {fields.map((field) => (
           <>
             {field.isFile ? (

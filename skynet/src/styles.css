@@ -11,6 +11,18 @@
     #6d6d6d -78.47%,
     #11101d 91.61%
   );
+  --data-card-gradient-2: linear-gradient(
+    144.39deg,
+    #4ebfe8 -278.56%,
+    #1051b1 -78.47%,
+    #07ac85 91.61%
+  );
+  --data-card-gradient-3: linear-gradient(
+    144.39deg,
+    #d6e84e -278.56%,
+    #e2e6cb -78.47%,
+    #c43205 91.61%
+  );
   --custom-gradient: linear-gradient(
     144.39deg,
     #ffffff -278.56%,
@@ -230,7 +242,10 @@ button {
 }
 
 .data-card-2 {
-  background: var(--black-gradient);
+  background: var(--data-card-gradient-2);
+}
+.data-card-3 {
+  background: var(--data-card-gradient-3);
 }
 
 .column-card {
