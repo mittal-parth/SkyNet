@@ -40,10 +40,10 @@ fn store_n(weights: &str, number: &str) -> String {
 }
 
 #[tauri::command]
-fn aggregator(number: u32) -> String {
+fn aggregator(number: &str) -> String {
     let python_command = Command::new("python3")
         .arg("aggregator.py")
-        .arg("1")
+        .arg(number)
         .output();
     let file = std::fs::File::open("weights_final.json").unwrap();
     let reader = std::io::BufReader::new(file);
