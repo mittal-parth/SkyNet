@@ -5,12 +5,15 @@ import JobPage from "./pages/JobPage";
 import UploadData from "./pages/UploadData";
 import UploadModel from "./pages/UploadModel";
 import GetNotifs from "./pages/GetNotifs";
+import Landing from "./pages/Landing";
 
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 const App = () => {
   return (
     <>
+    <div className="bg-primary w-full h-screen overflow-y-auto ">
+
       <ConnectButton />
       <Routes>
         <Route path="/" element={<GetNotifs />} />
@@ -18,7 +21,10 @@ const App = () => {
         <Route path="/model" element={<ModelMarket />} />
         <Route path="/uploaddata" element={<UploadData />} />
         <Route path="/uploadmodel" element={<UploadModel />} />
+        <Route path="/landing" element={<Landing />} />
+
       </Routes>
+    </div>
     </>
   );
 };
