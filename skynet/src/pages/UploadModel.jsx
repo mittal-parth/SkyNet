@@ -2,12 +2,15 @@ import React, { useState } from "react";
 import Form from "../components/Form";
 import FormPage from "../components/FormPage";
 import { useWalletClient, useSignMessage,useContractWrite } from "wagmi";
-
+import { useLocation } from "react-router-dom";
 import { CONTRACT_ADDRESS} from "../config";
 import ABI from "../constants/skynetabi.json";
 const skynetABI=ABI.abi;
 
 export default function UploadModel() {
+  const location = useLocation();
+  console.log(location.state)
+  const hashList = location.state?? [];
   const [modelDetails, setModelDetails] = useState({});
   const [file, setFile] = useState();
   const [modelHash, setModelHash] = useState(null);
@@ -63,8 +66,10 @@ export default function UploadModel() {
           ]}
           setData={setModelDetails}
           data={modelDetails}
-        />
-      }
+          />
+        }
+        hashList={hashList}
+        navigationPage={"/jobConfig"}
       title="Upload your model"
       text="Provide the details asked in the form"
       imageStyle="!max-w-[30vw]"

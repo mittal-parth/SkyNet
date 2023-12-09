@@ -61,6 +61,7 @@ export default function Form({walletClient, handleSubmit, fields, setData, data 
                 }
                 placeholder={field.placeholder}
                 type={field.type ?? "text"}
+                
               />
             )}
           </>

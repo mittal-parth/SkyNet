@@ -2,12 +2,15 @@ import React, { useState } from "react";
 import Form from "../components/Form";
 import { useWalletClient, useSignMessage,useContractWrite } from "wagmi";
 import FormPage from "../components/FormPage";
-
+import { useLocation } from "react-router-dom";
 import { CONTRACT_ADDRESS } from "../config";
 import ABI from "../constants/skynetabi.json";
 const skynetABI=ABI.abi;
 
 export default function JobConfig() {
+  const location = useLocation();
+  console.log(location.state)
+  const hashList = location.state?? [];
   const [jobDetails, setJobDetails] = useState({});
   const { data: walletClient} = useWalletClient();
 
