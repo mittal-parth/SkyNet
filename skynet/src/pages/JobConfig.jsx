@@ -17,7 +17,7 @@ export default function JobConfig() {
     functionName: 'createJob',
   })
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (filehash) => {
     console.log("Create Job")
     console.log(jobDetails)
     write({
