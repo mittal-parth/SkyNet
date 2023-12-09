@@ -1,26 +1,36 @@
 import React from 'react';
-import Banner from '../components/Banner';
-import NavBar from '../components/NavBar';
+import styles from "../style";
+import { Billing, Business, CardDeal, Clients, CTA, Footer, Navbar, Stats, Testimonials, Hero } from "../components";
+
 export default function Landing() {
     return (
         <>
-        <div >
-        <NavBar />
-        <div className='w-[75%]'>
+        <div className="bg-primary w-full overflow-hidden">
+    <div className={`${styles.paddingX} ${styles.flexCenter}`}>
+      <div className={`${styles.boxWidth}`}>
+        <Navbar />
+      </div>
+    </div>
 
-        <Banner
-          name={(
-              <>
-              Discover, buy, and sell <br />Data and Models
-            </>
-          )}
-          childStyles="md:text-4xl sm:text-2xl xs:text-xl text-left"
-          parentStyle="justify-start mb-6 h-72 sm:h-60 p-12 xs:p-4 xs:h-44 rounded-3xl"
-          />
-
-          </div>
-          </div>
-          
+    <div className={`bg-primary ${styles.flexStart}`}>
+      <div className={`${styles.boxWidth}`}>
+        <Hero />
+      </div>
+    </div>
+    
+    <div className={`bg-primary ${styles.paddingX} ${styles.flexCenter}`}>
+      <div className={`${styles.boxWidth}`}>
+        <Stats />
+        <Business />
+        <Billing />
+        <CardDeal />
+        <Testimonials />
+        <Clients />
+        <CTA />
+        <Footer />
+      </div>
+    </div>
+  </div>
         </>
     );
 }
