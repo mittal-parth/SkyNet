@@ -35,7 +35,7 @@ contract Resource {
         string fileAddress;
         string descriptionAddress;
         address payable owner;
-        bool isActive;
+        bool isForSale;
         uint256 price;
     }
 
@@ -103,7 +103,7 @@ contract Resource {
         string memory _title,
         string memory _fileAddress,
         string memory _descriptionAddress,
-        bool _isActive,
+        bool _isForSale,
         uint256 _price
     ) public {
         modelIdCounter.increment();
@@ -115,7 +115,7 @@ contract Resource {
             _fileAddress,
             _descriptionAddress,
             payable(msg.sender),
-            _isActive,
+            _isForSale,
             _price
         );
         modelObjectsById[newId] = newModel;
@@ -274,11 +274,40 @@ contract Resource {
     // Function to mark Job as Completed
     function setJobCompleted(uint256 _jobId) internal {
         Job storage job = jobObjectsById[_jobId];
-        require(
-            job.status == JobStatus.RUNNING,
-            "Job must be RUNNING"
-        );
+        require(job.status == JobStatus.RUNNING, "Job must be RUNNING");
         job.status = JobStatus.COMPLETED;
+    }
+
+    // Buy/Sell Functions
+
+    // Function to buy Data
+    function buyData(uint256 _id) public payable {
+        Data storage data = dataObjectsById[_id];
+
+        require(data.isForSale, "Data is not for sale");
+        require(msg.value == data.price, "Insufficient amount");
+        require(data.owner != msg.sender, "You already own this data");
+
+        address payable previousOwner = data.owner;
+        data.owner = payable(msg.sender);
+
+        // Transfer payment to the previous owner
+        previousOwner.transfer(msg.value);
+    }
+
+    // Function to buy Model
+    function buyModel(uint256 _id) public payable {
+        Model storage model = modelObjectsById[_id];
+
+        require(model.isForSale, "Model is not for sale.");
+        require(msg.value == model.price, "Insufficient amount");
+        require(model.owner != msg.sender, "You already own this model");
+
+        address payable previousOwner = model.owner;
+        model.owner = payable(msg.sender);
+
+        // Transfer payment to the previous owner
+        previousOwner.transfer(msg.value);
     }
 
     // Functions to retrieve objects by their id
@@ -365,5 +394,67 @@ contract Resource {
         }
 
         return myJobs;
+    }
+
+    // Functions to get all resources
+
+    // Function to get all for sale Data objects
+    function fetchAllForSaleData() public view returns (Data[] memory) {
+        uint256 count = dataIdCounter.current();
+        Data[] memory forSaleData = new Data[](count);
+
+        uint256 forSaleDataIndex = 0;
+        for (uint256 i = 1; i <= count; i++) {
+            Data storage data = dataObjectsById[i];
+            if (data.isForSale) {
+                forSaleData[forSaleDataIndex] = data;
+                forSaleDataIndex++;
+            }
+        }
+
+        return forSaleData;
+    }
+
+    // Function to get all active Model objects
+    function fetchAllForSaleModels() public view returns (Model[] memory) {
+        uint256 count = modelIdCounter.current();
+        Model[] memory forSaleModels = new Model[](count);
+
+        uint256 forSaleModelIndex = 0;
+        for (uint256 i = 1; i <= count; i++) {
+            Model storage model = modelObjectsById[i];
+            if (model.isForSale) {
+                forSaleModels[forSaleModelIndex] = model;
+                forSaleModelIndex++;
+            }
+        }
+
+        return forSaleModels;
+    }
+
+    // Function to get all active ComputeResource objects
+    function getAllActiveComputeResources()
+        public
+        view
+        returns (ComputeResource[] memory)
+    {
+        uint256 count = computeResourceIdCounter.current();
+        ComputeResource[] memory activeComputeResources = new ComputeResource[](
+            count
+        );
+
+        uint256 activeComputeResourceIndex = 0;
+        for (uint256 i = 1; i <= count; i++) {
+            ComputeResource
+                storage computeResource = computeResourceObjectsById[i];
+            if (computeResource.isActive) {
+                activeComputeResources[
+                    activeComputeResourceIndex
+                ] = computeResource;
+                activeComputeResourceIndex++;
+            }
+        }
+
+        return activeComputeResources;
     }
 }
