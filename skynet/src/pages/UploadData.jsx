@@ -31,15 +31,15 @@ export default function UploadData() {
 
  
   const handleSubmit = async (fileHash) => {
-    console.log("Upload Data")
-    console.log(dataDetails)
-    console.log(fileHash)
+    if(fileHash==null){
+      alert("Please upload a file")
+      return
+    }
     write({
       args: [dataDetails.title,fileHash,dataDetails.description,true,dataDetails.price],
       from: walletClient.account.address
     })
-    console.log("Data uploaded")
-  };
+      };
 
 
   return (
