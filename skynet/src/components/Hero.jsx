@@ -11,12 +11,9 @@ const Hero = () => {
           <div className="flex-1 font-poppins font-semibold ss:text-[72px] text-[52px] text-white ss:leading-[100px] leading-[75px]">
             <span className="text-gradient">SKYNET</span> {" "} 
           </div>
-          <div className="ss:flex hidden md:mr-4 mr-0">
-              <GetStarted/>
-          </div>
         </div>
         <p className={`${styles.paragraph} max-w-[470px] `}>
-          Decentralised GPU cloud computing platform powered by
+          Decentralised Machine Learning platform powered by
           <span className="text-gradient"> ZK</span>
           
         </p>

@@ -118,10 +118,10 @@ button {
     64.18% 64.18% at 71.16% 35.69%,
     #def9fa 0.89%,
     #bef3f5 17.23%,
-    #9dedf0 42.04%,
-    #7de7eb 55.12%,
-    #5ce1e6 71.54%,
-    #33bbcf 100%
+    #7f09ec 42.04%,
+    #7507b5 55.12%,
+    #560476 71.54%,
+    #54195f 100%
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -133,11 +133,11 @@ button {
   background: linear-gradient(
     157.81deg,
     #def9fa -43.27%,
-    #bef3f5 -21.24%,
-    #9dedf0 12.19%,
-    #7de7eb 29.82%,
-    #5ce1e6 51.94%,
-    #33bbcf 90.29%
+    #bef3f5 -21.24%,  
+    #d6d9d9 12.19%,
+    #e7eaea 29.82%,
+    #ebebeb 51.94%,
+    #eb1308 90.29%
   );
 }
 

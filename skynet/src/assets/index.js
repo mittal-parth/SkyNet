@@ -23,7 +23,9 @@ import twitter from "./twitter.svg";
 import people01 from "./people01.png";
 import people02 from "./people02.png";
 import people03 from "./people03.png";
-
+import dataPic from "./dataPic.png";
+import model from "./model.png"
+import configuration from "./configuration.png"
 export {
   airbnb,
   bill,
@@ -50,4 +52,7 @@ export {
   people01,
   people02,
   people03,
+  dataPic,
+  model,
+  configuration
 };

@@ -1,4 +1,4 @@
-import { people01, people02, people03, facebook, instagram, linkedin, twitter, airbnb, binance, coinbase, dropbox, send, shield, star  } from "../assets";
+import { people01, people02, people03, facebook, instagram, linkedin, twitter, airbnb, binance, coinbase, dropbox, send, shield, star,dataPic,model, configuration  } from "../assets";
 
 export const navLinks = [
   {
@@ -22,50 +22,47 @@ export const features = [
   {
     id: "feature-1",
     icon: star,
-    title: "Rewards",
+    title: "Choose Data",
     content:
-      "The best credit cards offer some tantalizing combinations of promotions and prizes",
+      "Choose the data on which you want to train your model you can choose from our marketplace or upload your own data.",
   },
   {
     id: "feature-2",
     icon: shield,
-    title: "100% Secured",
-    content:
-      "We take proactive steps make sure your information and transactions are secure.",
+    title: "Choose Model",
+    content:"Choose the model you want to train your data with. You can choose from our marketplace or upload your own model.",
   },
   {
     id: "feature-3",
-    icon: send,
-    title: "Balance Transfer",
+    icon: dataPic,
+    title: "Set Job Configuration",
     content:
-      "A balance transfer credit card can save you a lot of money in interest charges.",
+      "Set the configuration of your job like the price and computation resource.",
   },
 ];
 
-export const feedback = [
+export const steps = [
   {
-    id: "feedback-1",
+    id: "step-1",
+    title : "Choose data",
     content:
-      "Money is only a tool. It will take you wherever you wish, but it will not replace you as the driver.",
-    name: "Herman Jensen",
-    title: "Founder & Leader",
-    img: people01,
+      "Choose the data on which you want to train your model you can choose from our marketplace or upload your own data.",
+    img: dataPic,
   },
   {
-    id: "feedback-2",
+    id: "step-2",
+    title:"Choose model",
     content:
-      "Money makes your life easier. If you're lucky to have it, you're lucky.",
-    name: "Steve Mark",
-    title: "Founder & Leader",
-    img: people02,
+      "Choose the model you want to train your data with. You can choose from our marketplace or upload your own model.",
+
+    img: model,
   },
   {
-    id: "feedback-3",
+    id: "step-3",
+    title:"Set job config",
     content:
-      "It is usually people in the money business, finance, and international trade that are really rich.",
-    name: "Kenn Gallagher",
-    title: "Founder & Leader",
-    img: people03,
+      "Set the configuration of your job like the price and computation resource.",
+    img: configuration,
   },
 ];
 
