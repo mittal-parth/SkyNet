@@ -4,14 +4,17 @@ export const navLinks = [
   {
     id: "home",
     title: "Home",
+    redirect: "/landing",
   },
   {
     id: "marketplace",
     title: "Marketplace",
+    redirect: "/uploaddata",
   },
   {
     id: "job",
     title: "Jobs",
+    redirect: "/jobs",
   },
 ];
 

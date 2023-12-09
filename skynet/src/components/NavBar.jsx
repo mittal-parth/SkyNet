@@ -35,9 +35,12 @@
 import React,{useState} from 'react'
 import {close, logo, menu} from '../assets'
 import {navLinks} from '../constants'
+import {Routes, Route, useNavigate} from 'react-router-dom';
 
 const NavBar = () => {
   const [toggle, setToggle] = useState(false)
+  const navigate = useNavigate(); 
+
   return (
     <nav className='w-full flex py-6 justify-between items-center navbar'>
       <img src={logo} alt="hoobank" className='w-[124px] h-[32px]' />
@@ -46,7 +49,7 @@ const NavBar = () => {
           navLinks.map((el, index)=>{
             return(
               <li key={el.id} className={`font-poppins font-normal cursor-pointer text-[16px] ${index === navLinks.length-1 ? 'mr-0':'mr-10'} text-white`}>
-                <a href={`#${el.id}`}>
+                <a onClick={() => navigate('/uploaddata')} className='text-white'>
                   {el.title}
                 </a>
               </li>
