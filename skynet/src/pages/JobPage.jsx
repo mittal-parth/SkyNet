@@ -12,76 +12,123 @@ import {
 } from "@waku/sdk";
 import { useEffect, useState, useCallback } from "react";
 
-function JobPage() {
-  const [name, setName] = useState("");
-  const [waku, setWaku] = useState(undefined);
-  const [wakuStatus, setWakuStatus] = useState("None");
-  const [messages, setMessages] = useState([]);
-  const [issender, setIsSender] = useState(0);
-  const [n, setN] = useState(0);
-  const [initial, setInitial] = useState(0);
-  const [final, setFinal] = useState(0);
-  const [s, setS] = useState(1);
+const ContentTopic = `/skynet/1/chat/proto`;
+const Encoder = createEncoder({ contentTopic: ContentTopic });
+const Decoder = createDecoder(ContentTopic);
 
-  function test() {
-    invoke("testpy").then((res) => {
-      setS(res);
-    });
-  }
+const SimpleChatMessage = new protobuf.Type("SimpleChatMessage")
+  .add(new protobuf.Field("timestamp", 1, "uint32"))
+  .add(new protobuf.Field("srcId", 2, "uint32"))
+  .add(new protobuf.Field("dstId", 3, "uint32"))
+  .add(new protobuf.Field("body", 4, "string"))
+  .add(new protobuf.Field("ACK", 5, "uint32"))
+  .add(new protobuf.Field("SYN", 6, "uint32"))
 
-  useEffect(() => {
-    if (!waku || waku.status != "Ready") return;
-    if (issender == 1) {
-      send(initial);
-    } else {
-      recieve(final);
-    }
-  }, [n]);
+const clientId = parseInt(import.meta.env.VITE_ID)
 
-  async function showMessage(message) {
-    let m = messages[0];
-    console.log(m, "hello");
-    if ((m === undefined || m == []) && issender === 1) {
-      send(initial);
-      return;
-    }
-    if ((m === undefined || m == []) && issender === 0) {
-      recieve(final);
-      return;
-    }
-    if (issender === 1) {
-      if (m.n == n && m.server == 0) {
-        setFinal(m.final);
-        setInitial(initial + 1);
-        setN(n + 1);
-        console.log("server condition");
-      } else {
-        start(initial);
+const WORKERS = [4000, 5000]
+const EPOCHS = 3
+
+const reducer = (state, action) => {
+  const _inPipe = {...state.inPipe}
+  const ACK = action.ACK ?? 0
+
+  switch (action.type) {
+    case "ADD_MESSAGE":
+      console.log("Message received!")
+      const _messages = state.messages
+      _messages.push(JSON.stringify(action.message))
+      return { ...state, messages: _messages }
+    case "ACK":
+      delete _inPipe[action.id]
+      return { ...state, inPipe: _inPipe }
+    case "SEND_MESSAGE":
+      const protoMsg = SimpleChatMessage.create({
+        timestamp: new Date(),
+        srcId: clientId,
+        dstId: action.dstId,
+        body: JSON.stringify(action.body),
+        ACK: ACK,
+        SYN: action.SYN ?? state.sendCounter + 1
+      });
+      const payload = SimpleChatMessage.encode(protoMsg).finish();
+  
+      // Send over Waku Relay
+      action.waku.relay.send(Encoder, { payload });
+      console.log("Message sent!")
+
+      if (ACK == 0) {
+        _inPipe[state.sendCounter + 1] = {
+          dstId: action.dstId,
+          body: action.body,
+          SYN: state.sendCounter + 1
+        }
       }
-    } else if (m.n == n + 1 && m.server == 1 && m.n > 0) {
-      console.log("worker condition");
-      setInitial(m.initial);
-      test();
-      setFinal(final + 1 + s);
-      setN(m.n);
-    } else if (m.n == n + 1 && m.server == 1 && m.n == 0) {
-      setInitial(m.initial, () => recieve(final + 1));
-      setFinal(final + 1);
-    } else {
-      recieve(final);
-    }
-    console.log(message);
+      else {
+        console.log("Sending ACK!")
+      }
+
+      return {
+        ...state,
+        inPipe: _inPipe,
+        sendCounter: ACK == 0 && !action.SYN ? state.sendCounter + 1 : state.sendCounter
+      };
+    // case "RESEND":
+    //   Object.values(state.inPipe).forEach(({dstId, body, SYN}) => {
+    //     console.log(`Resending ${SYN} ...`)
+    //     const protoMsg = SimpleChatMessage.create({
+    //       timestamp: new Date(),
+    //       srcId: clientId,
+    //       dstId: dstId,
+    //       body: JSON.stringify(body),
+    //       ACK: ACK,
+    //       SYN: SYN
+    //     });
+    //     const payload = SimpleChatMessage.encode(protoMsg).finish();
+    
+    //     // Send over Waku Relay
+    //     action.waku.relay.send(Encoder, { payload });
+    //   })
+    //   return {...state}
+    default:
+      return state
   }
+}
 
-  const timeoutId = setTimeout(
-    showMessage,
-    10000,
-    "This message will be displayed after 3 seconds."
-  );
+const initState = {
+  sendCounter: 0,
+  messages: [],
+  inPipe: {}
+}
 
-  useEffect(() => {
+function JobPage() {
+  const [waku, setWaku] = React.useState(undefined);
+  const [wakuStatus, setWakuStatus] = React.useState("None");
+
+  const [state, dispatch] = React.useReducer(reducer, initState)
+  // const [sendCounter, setSendCounter] = React.useState(1);
+  // const [messages, setMessages] = React.useState([]);
+  // const [inPipe, setInPipe] = React.useState(() => new Set());
+
+  const dstId = React.useRef(null);
+
+  React.useEffect(() => {
+    if (!state.messages.length) return;
+    const message = JSON.parse(state.messages[state.messages.length - 1]);
+    console.log(`Message-${message.SYN} found!`)
+    dispatch({
+      type: "SEND_MESSAGE",
+      dstId: message.srcId,
+      body: {},
+      ACK: message.SYN,
+      waku: waku
+    })
+  }, [state.messages.length])
+
+  React.useEffect(() => {
     if (!!waku) return;
     if (wakuStatus !== "None") return;
+
     setWakuStatus("Starting");
     (async () => {
       const waku = await createRelayNode({ defaultBootstrap: true });
@@ -94,30 +141,32 @@ function JobPage() {
     })();
   }, [waku, wakuStatus]);
 
-  const processIncomingMessage = useCallback((wakuMessage) => {
-    if (!wakuMessage.payload) return;
+  const processIncomingMessage = React.useCallback((wakuMessage) => {
     console.log("Message received", wakuMessage);
-    const { initial, final, server, n } = SenderMessage.decode(
-      wakuMessage.payload
-    );
-    let new_message = {
-      initial: initial,
-      final: final,
-      server: server,
-      n: n,
-    };
+    if (!wakuMessage.payload) return;
 
-    if (new_message == messages[0]) {
+    const message = SimpleChatMessage.decode(wakuMessage.payload);
+
+    if (message.dstId != clientId) return;
+
+    console.log(message)
+    if (message.ACK) {
+      dispatch({
+        type: "ACK",
+        id: message.ACK
+      })
       return;
     }
-    // console.log(new_message);
-    setMessages((messages) => {
-      return [new_message].concat(messages);
-    });
+
+    dispatch({
+      type: "ADD_MESSAGE",
+      message: message
+    })
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!waku) return;
+
     // Pass the content topic to only process messages related to your dApp
     const deleteObserver = waku.relay.subscribe(
       Decoder,
@@ -128,74 +177,73 @@ function JobPage() {
     return deleteObserver;
   }, [waku, wakuStatus, processIncomingMessage]);
 
-  const send = (val) => {
-    let message = {
-      initial: val,
-      final: final,
-      server: 1,
-      n: n,
-    };
-    sendMessage(message, waku).then(() => console.log("Message sent start"));
+  const sendMessageOnClick = () => {
+    // Check Waku is started and connected first.
+    if (wakuStatus !== "Ready") return;
+
+    dispatch({
+      type: "SEND_MESSAGE",
+      dstId: dstId.current.value,
+      body: {},
+      waku: waku,
+    })
+
   };
 
-  const recieve = (val) => {
-    let message = {
-      initial: initial,
-      final: val,
-      server: 0,
-      n: n,
-    };
-    console.log(message, "rec");
-    sendMessage(message, waku).then(() => console.log("Message sent rec"));
-  };
+  const isConfirmed = (pktId) => {
+    return !Object.keys(state.inPipe).has(pktId)
+  }
+
+  const resend = () => {
+    Object.values(state.inPipe).forEach(({dstId, body, SYN}) => {
+      dispatch({
+        type: "RESEND",
+      })
+    })
+
+  }
+  const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
+
+  // setInterval(resend, 30000);
 
   return (
     <div className="App">
       <header className="App-header">
         <p>{wakuStatus}</p>
-        {/* <button onClick={test}>Test</button> */}
-
-        <button
-          onClick={() => {
-            setIsSender(1);
-            setInitial(1);
-            setN(1);
-            // start(1);
-          }}
-          disabled={wakuStatus !== "Ready"}
-        >
-          Sender
+        <input type="number" ref={dstId} />
+        <button onClick={sendMessageOnClick} disabled={wakuStatus !== "Ready"}>
+          Send Message
         </button>
-        <button onClick={() => recieve(1)} disabled={wakuStatus !== "Ready"}>
-          Receiver
+        <ul>
+          {state.messages.map((msg) => {
+            return (
+              <li>
+                <p>
+                  {msg}
+                </p>
+              </li>
+            );
+          })}
+        </ul>
+        <p>In pipe: {Array.from(Object.keys(state.inPipe)).join(' ')}</p>
+        <button onClick={async () => {
+          for(let _ = 0; _ < EPOCHS; _++) {
+            WORKERS.map(async (workerId, _) => {
+              dispatch({
+                type: "SEND_MESSAGE",
+                dstId: workerId,
+                body: {},
+                waku: waku,
+              })
+            })
+            await sleep(5000)
+            while (state.inPipe.length) { await sleep(1000) }
+          }
+        }} disabled={wakuStatus !== "Ready"}>
+          Start
         </button>
-        <p>Initial: {initial}</p>
-        <p> Final: {final}</p>
-        <p>Epochs: {n}</p>
-        <p>Is Server: {issender}</p>
       </header>
     </div>
   );
-}
-
-const ContentTopic = `/ppp/3/chat/proto`;
-const Encoder = createEncoder({ contentTopic: ContentTopic });
-const Decoder = createDecoder(ContentTopic);
-
-const SenderMessage = new protobuf.Type("SenderMessage")
-  .add(new protobuf.Field("initial", 1, "uint32"))
-  .add(new protobuf.Field("final", 2, "uint32"))
-  .add(new protobuf.Field("server", 3, "uint32"))
-  .add(new protobuf.Field("n", 4, "uint32"));
-
-function sendMessage(message, waku) {
-  const protoMsg = SenderMessage.create({
-    initial: message.initial,
-    final: message.final,
-    server: message.server,
-    n: message.n,
-  });
-  const payload = SenderMessage.encode(protoMsg).finish();
-  return waku.relay.send(Encoder, { payload });
 }
 export default JobPage;

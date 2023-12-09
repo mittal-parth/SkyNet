@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 
 import InputBox from "./InputBox";
-import Button from "./Button";
+import Button from "./Button2";
 import DropZone from "./DropZone";
 // import { uploadFile } from "@/utils";
 // import { LoaderContext } from "@/context/loaderContext";
