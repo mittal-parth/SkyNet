@@ -6,6 +6,7 @@ export default function UploadModel() {
         console.log('form submitted');
     }
   const [modelDetails, setModelDetails] = useState({});
+  const [file, setFile] = useState();
 
     return (
         <FormPage
@@ -14,6 +15,7 @@ export default function UploadModel() {
         fields={[
           {
             label: 'Model Name',
+            dataLabel: "name",
             placeholder: `MD 1`,
           },
           {
@@ -23,11 +25,16 @@ export default function UploadModel() {
           },
           {
             label: 'Description',
+            dataLabel: "name",
+
             placeholder: 'This is linear regression model'
           },
           {
-            label: 'Model Files',
+              dataLabel: "name",
+              label: 'Model Files',
             isFile: true,
+            setFile : setFile,
+            file : file
           }
         ]}
         setData={setModelDetails}

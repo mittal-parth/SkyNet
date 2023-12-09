@@ -1,7 +1,13 @@
 import { SiSolidity } from "react-icons/si";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { useContractWrite } from 'wagmi'
+import { CONTRACT_ADDRESS} from "../config";
+import ABI from "../constants/skynetabi.json";
+const skynetABI=ABI.abi;
+
+
 export default function DataCard({ dataObject }) {
+  console.log(dataObject)
   const { data, isLoading, isSuccess, write } = useContractWrite({
     address: CONTRACT_ADDRESS,
     abi: skynetABI,
@@ -46,7 +52,7 @@ export default function DataCard({ dataObject }) {
           </div>
         </div>
       </div>
-      {data.isOwned ? (
+      {dataObject.isOwner ? (
         <div
           className={` px-2 py-1  my-1 text-sm font-medium font-poppins text-center text-white ${
             !data.isActive ? "bg-green-600" : "bg-red-700"

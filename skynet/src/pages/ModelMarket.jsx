@@ -46,7 +46,7 @@ const ModelMarket = ()=> {
         
         <div className='flex items-center'>
 
-        <div className='font-poppins mr-2 text-4xl'>
+        <div className='font-poppins mr-2 text-4xl text-white'>
         Models Market
       </div>
       <IoIosAddCircleOutline size={40} color='green'/>
@@ -67,7 +67,7 @@ const ModelMarket = ()=> {
             </div>
             <div className='flex items-center'>
 
-        <div className='font-poppins mr-2 text-4xl'>
+        <div className='font-poppins mr-2 text-4xl text-white'>
         My models
       </div>
       <a onClick={() => navigate('/uploadmodel')}><IoIosAddCircleOutline size={40} color='green'/></a>

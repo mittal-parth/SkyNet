@@ -229,6 +229,10 @@ button {
   background: var(--black-gradient);
 }
 
+.data-card-2 {
+  background: var(--black-gradient);
+}
+
 .column-card {
   background: var(--custom-gradient);
 }

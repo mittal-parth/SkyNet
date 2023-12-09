@@ -12,9 +12,9 @@ import { getWalletClient , getPublicClient } from "@wagmi/core";
 import { readContract } from '@wagmi/core'
 import { CONTRACT_ADDRESS} from "../config";
 import ABI from "../constants/skynetabi.json";
-
-
 const skynetABI=ABI.abi;
+
+
 const DataMarket = () => {
 
   const navigate = useNavigate();
@@ -74,7 +74,7 @@ const DataMarket = () => {
       <div className="flex flex-wrap mx-10 my-10">
         {(dataObjects && dataObjects.length > 0 )? dataObjects.map((element)=>{
           console.log("element",element)
-          return <DataCard data={element} />;
+          return <DataCard dataObject={element} />;
         }): <div className="font-poppins mr-2 text-4xl text-white">No data found</div>}
       </div>
       <div className="mx-10 my-10">{/* <ModelCard/> */}</div>
@@ -85,9 +85,9 @@ const DataMarket = () => {
         </a>
       </div>
       <div className="flex flex-wrap mx-10 my-10">
-        {ownerDataObjects && ownerDataObjects.length != 0? ownerDataObjects.forEach((data) => {
+        {ownerDataObjects && ownerDataObjects.length != 0? ownerDataObjects.forEach((element) => {
           console.log(data.title)
-          return <DataCard data={data} isOwned={false} />;
+          return <DataCard dataObject={element} />;
         }) : <div className="font-poppins mr-2 text-4xl text-white">No data found</div>}
       </div>
     </div>

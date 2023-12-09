@@ -3,21 +3,22 @@ export default function ModelCard({ data, isOwned }) {
   const tempData = data;
   return (
     <div
-      className={` flex-col justify-between mx-3 my-3 max-w-sm p-6 bg-white border-l-4 
-      } rounded-lg border-gray-200 shadow-xl dark:bg-gray-800 dark:border-gray-700`}
+      className={` flex-col justify-between mx-3 my-3 max-w-sm p-6 bg-white  
+      rounded-lg border-gray-200 shadow-xl dark:bg-gray-800 dark:border-gray-700 data-card`}
     >
       <div className="flex justify-between items-center">
-        <h5 className="mb-2 text-2xl mr-10 font-semibold tracking-tight text-gray-900 dark:text-white font-poppins">
+        <h5 className="mb-2 text-2xl mr-10 font-semibold text-white tracking-tight text-gray-900 dark:text-white font-poppins">
           {tempData.modelname}
         </h5>
         <div className="flex items-center">
-          <SiSolidity />
-          <div className="text-xl font-semibold pb-1 pr-1">
+        <SiSolidity color="white" />
+          
+          <div className="text-xl font-semibold pb-1 pr-1 text-white">
             {tempData.price}
           </div>
         </div>
       </div>
-      <p className="mb-3 font-normal text-gray-500 dark:text-gray-400 font-poppins">
+      <p className="mb-3 font-normal text-gray-200 dark:text-gray-400 font-poppins">
         {tempData.description}
       </p>
       <div>
