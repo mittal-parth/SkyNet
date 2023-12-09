@@ -20,12 +20,11 @@ export default function Landing() {
     
     <div className={`bg-primary ${styles.paddingX} ${styles.flexCenter}`}>
       <div className={`${styles.boxWidth}`}>
-        <Stats />
         {/* <Business /> */}
         <div className='flex justify-center'>
         <Steps />
-
         </div>
+        <Stats />
         <Clients />
         <Billing />
         <CardDeal />

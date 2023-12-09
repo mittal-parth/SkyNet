@@ -12,7 +12,7 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 const App = () => {
   return (
     <>
-    <div className="bg-primary w-full h-screen overflow-y-auto">
+    <div className="bg-primary w-full h-screen overflow-y-auto ">
 
       <ConnectButton />
       <Routes>

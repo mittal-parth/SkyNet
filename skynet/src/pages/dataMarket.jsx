@@ -45,11 +45,11 @@ const DataMarket = ()=> {
       ];
 
     return (
-        <>
+        <div className='px-30'>
         
-        <div className='flex items-center'>
+        <div className='flex items-center '>
 
-        <div className='font-poppins mr-2 text-4xl'>
+        <div className='font-poppins  mr-2 text-4xl text-white'>
         Data Market
       </div>
       <IoIosAddCircleOutline size={40} color='green'/>
@@ -70,7 +70,7 @@ const DataMarket = ()=> {
             </div>
             <div className='flex items-center'>
 
-        <div className='font-poppins mr-2 text-4xl'>
+        <div className='font-poppins mr-2 text-4xl text-white'>
         My data
       </div>
       <a onClick={() => navigate('/uploaddata')}><IoIosAddCircleOutline size={40} color='green'/></a>
@@ -85,7 +85,7 @@ const DataMarket = ()=> {
                 }
 
             </div>
-            </>
+            </div>
     );
 }
 

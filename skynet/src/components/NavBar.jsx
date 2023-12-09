@@ -49,7 +49,7 @@ const NavBar = () => {
           navLinks.map((el, index)=>{
             return(
               <li key={el.id} className={`font-poppins font-normal cursor-pointer text-[16px] ${index === navLinks.length-1 ? 'mr-0':'mr-10'} text-white`}>
-                <a onClick={() => navigate('/uploaddata')} className='text-white'>
+                <a onClick={() => navigate('/data')} className='text-white'>
                   {el.title}
                 </a>
               </li>
