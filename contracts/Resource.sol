@@ -10,6 +10,13 @@ contract Resource {
         FREE,
         IN_USE
     }
+
+    enum JobStatus {
+        INITIALISED,
+        RUNNING,
+        COMPLETED
+    }
+
     // Data struct
     struct Data {
         uint256 id;
@@ -61,6 +68,14 @@ contract Resource {
     // Mappings to store instances of each struct by their id
     mapping(uint256 => Data) public dataObjectsById;
     mapping(uint256 => Model) public modelObjectsById;
+    mapping(uint256 => ComputeResource) public computeResourceObjectsById;
+    mapping(uint256 => Job) public jobObjectsById;
+
+    // Counters for generating unique IDs
+    Counters.Counter private dataIdCounter;
+    Counters.Counter private modelIdCounter;
+    Counters.Counter private computeResourceIdCounter;
+    Counters.Counter private jobIdCounter;
 
     // Functions to create and retrieve objects with generated IDs
     function createData(
@@ -163,6 +178,27 @@ contract Resource {
         job.computeResourceIds.push(_computeResourceId);
     }
 
+    // Function to start a Job
+    function startJob(uint256 _jobId) public {
+        Job storage job = jobObjectsById[_jobId];
+        job.status = JobStatus.RUNNING;
+
+        // Change the status of compute resources to IN_USE
+        setComputeResourcesInUse(job.computeResourceIds);
+    }
+
+    // Function to set ComputeResource status to IN_USE
+    function setComputeResourcesInUse(uint256[] memory _computeResourceIds) internal {
+        for (uint256 i = 0; i < _computeResourceIds.length; i++) {
+            uint256 computeResourceId = _computeResourceIds[i];
+            ComputeResource storage computeResource = computeResourceObjectsById[computeResourceId];
+
+            require(computeResource.status == ComputeResourceStatus.FREE, "ComputeResource is not free");
+
+            computeResource.status = ComputeResourceStatus.IN_USE;
+        }
+    }
+
     // Functions to retrieve objects by their id
     function getDataDetails(uint256 _id) public view returns (Data memory) {
         return dataObjectsById[_id];
@@ -248,5 +284,4 @@ contract Resource {
 
         return myJobs;
     }
-
 }
