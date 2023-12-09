@@ -7,13 +7,14 @@ import { faCloudArrowUp, faFile } from '@fortawesome/free-solid-svg-icons';
 import Info from "./Info";
 
 
-export default function DropZone({ label, setFiles, isMultiple }) {
+export default function DropZone({ label, setFiles }) {
     const { getRootProps, getInputProps, open, acceptedFiles } = useDropzone({
-        multiple: isMultiple ?? false,
+        multiple: false,
     });
 
     const files = acceptedFiles.map(file => {
-        setFiles(acceptedFiles);
+        console.log("setting files",file.path)
+        setFiles(file);
         
         return (<li key={file.path}>
             <Info text={`${file.path} - ${file.size} bytes`} icon={faFile} style="text-gray" />
@@ -21,9 +22,9 @@ export default function DropZone({ label, setFiles, isMultiple }) {
     });
 
     return (
-        <div className="mb-6 w-full" id="dropzone">
+        <div className="mb-6 w-full " id="dropzone">
             <label
-                className="block text-gray text-sm font-semibold mb-2.5"
+                className="block text-gray text-sm font-semibold font-poppins text-white mb-2.5"
             >
                 {label}
             </label>
@@ -31,10 +32,10 @@ export default function DropZone({ label, setFiles, isMultiple }) {
                 <input {...getInputProps()} />
                 <FontAwesomeIcon
                     icon={faCloudArrowUp}
-                    className={`w-[20px] h-[20px] text-gray`}
+                    className={`w-[20px] h-[20px] text-white`}
                 />
             </div>
-            <ul>{files}</ul>
+            <ul className='text-white'>{files}</ul>
         </div>
     ); 
 }
