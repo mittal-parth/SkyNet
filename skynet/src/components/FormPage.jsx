@@ -6,8 +6,8 @@ export default function FormPage({ image, title, text, form, imageStyle }) {
     <div className="flex flex-col md:flex-row items-start md:justify-around md:mt-12">
       <div className="flex flex-col items-start mb-6 md:mb-0">
         <div className={`md:flex shrink hidden mb-4 ${imageStyle}`}>
-          </div>
-        <img src = {cloudUpload }/>
+            </div>
+        <img src = {cloudUpload } className=" w-96 h-96"/>
         <h1 className="mb-4 text-white">{title}</h1>
         <p className="text-lg font-bold text-white text-gray/70 max-w-[320px]">{text}</p>
       </div>
