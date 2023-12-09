@@ -3,7 +3,20 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/Counters.sol";
 
+// PUSH Comm Contract Interface
+interface IPUSHCommInterface {
+    function sendNotification(
+        address _channel,
+        address _recipient,
+        bytes calldata _identity
+    ) external;
+}
+
 contract Resource {
+    address public EPNS_COMM_ADDRESS =
+        0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa;
+    address public CONTRACT_ADDRESS =
+        0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa;
     using Counters for Counters.Counter;
 
     enum ComputeResourceStatus {
@@ -57,6 +70,7 @@ contract Resource {
     struct Job {
         uint256 id;
         uint256[] computeResourceIds;
+        uint256[] dataHashes;
         address payable owner;
         uint256 minScorePerComputeResource;
         uint256 computeResourceCount;
@@ -151,7 +165,8 @@ contract Resource {
     function createJob(
         uint256 _minScorePerComputeResource,
         uint256 _computeResourceCount,
-        uint256 _maxRatePerMin
+        uint256 _maxRatePerMin,
+        uint256[] memory _dataHashes
     ) public {
         jobIdCounter.increment();
         uint256 newId = jobIdCounter.current();
@@ -160,12 +175,32 @@ contract Resource {
         jobObjectsById[newId] = Job(
             newId,
             emptyArray,
+            _dataHashes,
             payable(msg.sender),
             _minScorePerComputeResource,
             _computeResourceCount,
             _maxRatePerMin,
             0,
             JobStatus.INITIALISED
+        );
+
+        IPUSHCommInterface(EPNS_COMM_ADDRESS).sendNotification(
+            CONTRACT_ADDRESS, // from channel - recommended to set channel via dApp and put it's value -> then once contract is deployed, go back and add the contract address as delegate for your channel
+            CONTRACT_ADDRESS, // to recipient, put YOUR_CHANNEL_ADDRESS in case you want Broadcast or Subset. For Targetted put the address to which you want to send
+            bytes(
+                string(
+                    // We are passing identity here: https://push.org/docs/notifications/notification-standards/notification-standards-advance/#notification-identity
+                    abi.encodePacked(
+                        "0", // this represents minimal identity, learn more: https://push.org/docs/notifications/notification-standards/notification-standards-advance/#notification-identity
+                        "+", // segregator
+                        "1", // define notification type:  https://push.org/docs/notifications/build/types-of-notification (1, 3 or 4) = (Broadcast, targeted or subset)
+                        "+", // segregator
+                        "New Job for training has been posted!", // this is notification title
+                        "+", // segregator
+                        uintToStr(newId) // notification body
+                    )
+                )
+            )
         );
     }
 
@@ -193,9 +228,9 @@ contract Resource {
     }
 
     // Function to set ComputeResource status to IN_USE
-    function setComputeResourcesInUse(uint256[] memory _computeResourceIds)
-        internal
-    {
+    function setComputeResourcesInUse(
+        uint256[] memory _computeResourceIds
+    ) internal {
         for (uint256 i = 0; i < _computeResourceIds.length; i++) {
             uint256 computeResourceId = _computeResourceIds[i];
             ComputeResource
@@ -213,9 +248,10 @@ contract Resource {
     }
 
     // Function to mark ComputeResource as free
-    function setComputeResourceFree(uint256 _computeResourceId, uint256 _jobId)
-        public
-    {
+    function setComputeResourceFree(
+        uint256 _computeResourceId,
+        uint256 _jobId
+    ) public {
         ComputeResource storage computeResource = computeResourceObjectsById[
             _computeResourceId
         ];
@@ -242,11 +278,10 @@ contract Resource {
     }
 
     // Function to check if a compute resource is associated with a job
-    function isComputeResourceInJob(uint256 _computeResourceId, uint256 _jobId)
-        internal
-        view
-        returns (bool)
-    {
+    function isComputeResourceInJob(
+        uint256 _computeResourceId,
+        uint256 _jobId
+    ) internal view returns (bool) {
         Job storage job = jobObjectsById[_jobId];
         for (uint256 i = 0; i < job.computeResourceIds.length; i++) {
             if (job.computeResourceIds[i] == _computeResourceId) {
@@ -257,11 +292,9 @@ contract Resource {
     }
 
     // Function to check if all compute resources in a job are marked as free
-    function areAllComputeResourcesFree(uint256[] memory _computeResourceIds)
-        internal
-        view
-        returns (bool)
-    {
+    function areAllComputeResourcesFree(
+        uint256[] memory _computeResourceIds
+    ) internal view returns (bool) {
         for (uint256 i = 0; i < _computeResourceIds.length; i++) {
             ComputeResource
                 storage computeResource = computeResourceObjectsById[
@@ -324,11 +357,9 @@ contract Resource {
         return modelObjectsById[_id];
     }
 
-    function getComputeResourceDetails(uint256 _id)
-        public
-        view
-        returns (ComputeResource memory)
-    {
+    function getComputeResourceDetails(
+        uint256 _id
+    ) public view returns (ComputeResource memory) {
         return computeResourceObjectsById[_id];
     }
 
@@ -467,11 +498,35 @@ contract Resource {
 
     // Helper functions
 
-    function calculateComputeResourceScore(uint256 _ram, uint256 _gpu)
-        internal
-        pure
-        returns (uint256)
-    {
+    function calculateComputeResourceScore(
+        uint256 _ram,
+        uint256 _gpu
+    ) internal pure returns (uint256) {
         return _ram + _gpu * 2;
+    }
+
+    // Custom implementation to avoid importing
+    function uintToStr(uint256 value) internal pure returns (string memory) {
+        if (value == 0) {
+            return "0";
+        }
+
+        uint256 temp = value;
+        uint256 digits;
+
+        while (temp != 0) {
+            digits++;
+            temp /= 10;
+        }
+
+        bytes memory buffer = new bytes(digits);
+
+        while (value != 0) {
+            digits -= 1;
+            buffer[digits] = bytes1(uint8(48 + (value % 10)));
+            value /= 10;
+        }
+
+        return string(buffer);
     }
 }
