@@ -2,6 +2,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 use serde_json;
 use std::process::Command;
+use std::env;
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -10,8 +11,9 @@ fn greet(name: &str) -> String {
 
 #[tauri::command]
 fn get_weights() -> String {
-    let python_command = Command::new("python3").arg("train.py");
-    let file = std::fs::File::open("/home/mehul/.skynet/weights_final.json").unwrap();
+    let python_command = Command::new("python3").arg("train.py").arg(env::temp_dir().to_string());
+    let filepath = env::temp_dir().join("weights_final.json");
+    let file = std::fs::File::open(filepath).unwrap();
     let reader = std::io::BufReader::new(file);
     let weights: serde_json::Value = serde_json::from_reader(reader).unwrap();
     println!("{:?}", weights);
@@ -21,7 +23,8 @@ fn get_weights() -> String {
 #[tauri::command]
 fn store_weights(weights: String) -> String {
     let json: serde_json::Value = serde_json::from_str(&weights).unwrap();
-    let file = std::fs::File::create("/home/mehul/.skynet/weights.json").unwrap();
+    let filepath = env::temp_dir().join("weights.json");
+    let file = std::fs::File::create(filepath).unwrap();
     let writer = std::io::BufWriter::new(file);
     serde_json::to_writer_pretty(writer, &json).unwrap();
     return "success".to_string();
@@ -33,7 +36,8 @@ fn store_n(weights: &str, number: u32) -> String {
     let json: serde_json::Value = serde_json::from_str(weights).unwrap();
     // write to a json file called weights_final.json
     let file_name = format!("weights{}.json", number);
-    let file = std::fs::File::create(file_name).unwrap();
+    let filepath = env::temp_dir().join(file_name);
+    let file = std::fs::File::create(filepath).unwrap();
     let writer = std::io::BufWriter::new(file);
     serde_json::to_writer_pretty(writer, &json).unwrap();
     return "success".to_string();
@@ -43,9 +47,11 @@ fn store_n(weights: &str, number: u32) -> String {
 fn aggregator(number: u32) -> String {
     let python_command = Command::new("python3")
         .arg("aggregator.py")
-        .arg("1")
+        .arg(number)
+        .arg(env::temp_dir().to_string())
         .output();
-    let file = std::fs::File::open("weights_final.json").unwrap();
+    let filepath = env::temp_dir().join("weights_final.json");
+    let file = std::fs::File::open(filepath).unwrap();
     let reader = std::io::BufReader::new(file);
     let weights: serde_json::Value = serde_json::from_reader(reader).unwrap();
     println!("{:?}", weights);

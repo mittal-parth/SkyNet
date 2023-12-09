@@ -52,6 +52,16 @@ function JobPage() {
             setTrainedWeights(weights)
           })
         }
+        const trainedWeights = JSON.parse(action.message.body).trained_weights
+        if (trainedWeights) {
+          
+          // invoke('store_weights', {weights})
+          // console.log("Getting trained weights ...")
+          // invoke('get_weights').then((weights) => {
+          //   console.log(weights)
+          //   setTrainedWeights(weights)
+          // })
+        }
         return { ...state, messages: _messages, serverId: action.message.srcId }
       case "ACK":
         delete _inPipe[action.id]
@@ -112,6 +122,7 @@ function JobPage() {
   useEffect(() => {
     if (trainedWeights !== "") {
       console.log("Got new weights!")
+      console.log(state.serverId)
       dispatch({
         type: "SEND_MESSAGE",
         dstId: state.serverId,
@@ -178,13 +189,12 @@ function JobPage() {
 
   const processIncomingMessage = React.useCallback((wakuMessage) => {
     console.log("Message received", wakuMessage);
-    console.log(wakuMessage)
     if (!wakuMessage.payload) return;
-
+    
     const message = SimpleChatMessage.decode(wakuMessage.payload);
-
+    
     if (message.dstId != clientId) return;
-
+    
     if (message.ACK) {
       dispatch({
         type: "ACK",
@@ -192,7 +202,8 @@ function JobPage() {
       });
       return;
     }
-
+    
+    console.log(wakuMessage)
     dispatch({
       type: "ADD_MESSAGE",
       message: message,

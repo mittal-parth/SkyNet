@@ -11,6 +11,11 @@ import tqdm
 import os
 import json
 import ezkl
+import sys
+
+# print(sys.argv[1])
+tmp_dir = sys.argv[1]
+
 
 iris = load_iris()
 dataset = pd.DataFrame(data=np.c_[iris['data'], iris['target']],
@@ -53,7 +58,7 @@ print("train_y: ", train_y)
 print("test_y: ", test_y)
 
 state_dict = model.state_dict()
-with open("/home/mehul/.skynet/weights.json", 'r') as file:
+with open(f"{tmp_dir}/weights.json", 'r') as file:
     data_dict = json.load(file)
 
 for name, param in state_dict.items():
@@ -114,7 +119,7 @@ print(state_dict)
 json_data = json.dumps(state_dict)  # The indent parameter is optional, it makes the JSON output more readable
 
 # Specify the path to save the JSON file
-json_file_path = "/home/mehul/.skynet/weights_final.json"
+json_file_path = f"{tmp_dir}/weights_final.json"
 
 # Write the JSON string to the file
 with open(json_file_path, 'w') as file:
