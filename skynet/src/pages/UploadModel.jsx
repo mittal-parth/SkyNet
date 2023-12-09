@@ -28,7 +28,6 @@ export default function UploadModel() {
           {
             label: 'Model Files',
             isFile: true,
-            isMultiple: true,
           }
         ]}
         setData={setModelDetails}
