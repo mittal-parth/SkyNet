@@ -52,6 +52,13 @@ fn aggregator(number: u32) -> String {
     return weights.to_string();
 }
 
+#[tauri::command]
+fn initialize() {
+    let file = std::fs::File::open("test.json").unwrap();
+    let reader = std::io::BufReader::new(file);
+    let weights: serde_json::Value = serde_json::from_reader(reader).unwrap();
+    println!("{:?}", weights);
+}
 fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![greet])
