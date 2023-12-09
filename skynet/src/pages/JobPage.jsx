@@ -1,5 +1,6 @@
 // import { useState } from "react";
 import React from "react";
+import { useEffect} from "react";
 
 import { invoke } from "@tauri-apps/api/tauri";
 import "../App.css";
@@ -10,7 +11,9 @@ import {
   createEncoder,
   waitForRemotePeer,
 } from "@waku/sdk";
-import { useEffect, useState, useCallback } from "react";
+import {
+  useAccount,
+} from 'wagmi'
 
 const ContentTopic = `/skynet/1/chat/proto`;
 const Encoder = createEncoder({ contentTopic: ContentTopic });
@@ -24,9 +27,10 @@ const SimpleChatMessage = new protobuf.Type("SimpleChatMessage")
   .add(new protobuf.Field("ACK", 5, "uint32"))
   .add(new protobuf.Field("SYN", 6, "uint32"))
 
-const clientId = parseInt(import.meta.env.VITE_ID)
 
-const WORKERS = [4000, 5000]
+let clientId = parseInt(import.meta.env.VITE_ID)
+
+const WORKERS = ["0x8c42E233514011BfcFdF3e0c1258AfaDdAC5C191"]
 const EPOCHS = 3
 
 const reducer = (state, action) => {
@@ -37,6 +41,7 @@ const reducer = (state, action) => {
     case "ADD_MESSAGE":
       console.log("Message received!")
       const _messages = state.messages
+      // console.log(action.message.body)
       _messages.push(JSON.stringify(action.message))
       return { ...state, messages: _messages }
     case "ACK":
@@ -106,13 +111,20 @@ function JobPage() {
   const [wakuStatus, setWakuStatus] = React.useState("None");
 
   const [state, dispatch] = React.useReducer(reducer, initState)
-  // const [sendCounter, setSendCounter] = React.useState(1);
-  // const [messages, setMessages] = React.useState([]);
-  // const [inPipe, setInPipe] = React.useState(() => new Set());
-
   const dstId = React.useRef(null);
 
+  const { address, connector, isConnected } = useAccount()
+  useEffect(() => {
+    if(!isConnected) {
+      return;
+    }
+    clientId = address
+  }, [isConnected])
+  // console.log(address)
+  // clientId = address
+
   React.useEffect(() => {
+    console.log("Message found!")
     if (!state.messages.length) return;
     const message = JSON.parse(state.messages[state.messages.length - 1]);
     console.log(`Message-${message.SYN} found!`)
@@ -227,12 +239,18 @@ function JobPage() {
         </ul>
         <p>In pipe: {Array.from(Object.keys(state.inPipe)).join(' ')}</p>
         <button onClick={async () => {
-          for(let _ = 0; _ < EPOCHS; _++) {
+          for(let ep = 0; ep < EPOCHS; ep++) {
+            if (ep == 0) {
+              const initialWeights = await invoke('initialize')
+              console.log(initialWeights)
+            }
             WORKERS.map(async (workerId, _) => {
               dispatch({
                 type: "SEND_MESSAGE",
                 dstId: workerId,
-                body: {},
+                body: {
+                  "weights": initialWeights
+                },
                 waku: waku,
               })
             })
