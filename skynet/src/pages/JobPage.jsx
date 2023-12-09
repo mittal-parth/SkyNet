@@ -49,7 +49,7 @@ function JobPage() {
           console.log("Getting trained weights ...")
           invoke('get_weights').then((weights) => {
             console.log(weights)
-            setTrainedWeights(weights)
+            setTrainedWeights({weights, "nonce": state.sendCounter})
           })
         }
         return { ...state, messages: _messages, serverId: action.message.srcId }
@@ -111,12 +111,14 @@ function JobPage() {
 
   useEffect(() => {
     if (trainedWeights !== "") {
-      console.log("Got new weights!")
+      const {weights, _} = trainedWeights;
+      console.log("Sending trained weights ...")
+
       dispatch({
         type: "SEND_MESSAGE",
         dstId: state.serverId,
         body: {
-          "trained_weights": trainedWeights
+          "trained_weights": weights
         },
         waku: waku,
       })
