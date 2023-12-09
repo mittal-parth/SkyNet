@@ -11,7 +11,7 @@ fn greet(name: &str) -> String {
 
 #[tauri::command]
 fn get_weights() -> String {
-    let python_command = Command::new("python3").arg("train.py").arg(env::temp_dir().to_string());
+    let python_command = Command::new("python3").arg("train.py").arg(env::temp_dir());
     let filepath = env::temp_dir().join("weights_final.json");
     let file = std::fs::File::open(filepath).unwrap();
     let reader = std::io::BufReader::new(file);
@@ -47,8 +47,8 @@ fn store_n(weights: &str, number: u32) -> String {
 fn aggregator(number: u32) -> String {
     let python_command = Command::new("python3")
         .arg("aggregator.py")
-        .arg(number)
-        .arg(env::temp_dir().to_string())
+        .arg(number.to_string())
+        .arg(env::temp_dir())
         .output();
     let filepath = env::temp_dir().join("weights_final.json");
     let file = std::fs::File::open(filepath).unwrap();
