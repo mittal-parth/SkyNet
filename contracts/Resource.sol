@@ -126,12 +126,13 @@ contract Resource {
         uint256 _ram,
         uint256 _gpu,
         string memory _descriptionAddress,
-        uint256 _score,
         uint256 _ratePerMin,
         bool _isActive
     ) public {
         computeResourceIdCounter.increment();
         uint256 newId = computeResourceIdCounter.current();
+
+        uint256 calculatedScore = calculateComputeResourceScore(_ram, _gpu);
 
         computeResourceObjectsById[newId] = ComputeResource(
             newId,
@@ -140,7 +141,7 @@ contract Resource {
             _gpu,
             _descriptionAddress,
             payable(msg.sender),
-            _score,
+            calculatedScore,
             _ratePerMin,
             _isActive,
             ComputeResourceStatus.FREE
@@ -192,9 +193,9 @@ contract Resource {
     }
 
     // Function to set ComputeResource status to IN_USE
-    function setComputeResourcesInUse(
-        uint256[] memory _computeResourceIds
-    ) internal {
+    function setComputeResourcesInUse(uint256[] memory _computeResourceIds)
+        internal
+    {
         for (uint256 i = 0; i < _computeResourceIds.length; i++) {
             uint256 computeResourceId = _computeResourceIds[i];
             ComputeResource
@@ -212,10 +213,9 @@ contract Resource {
     }
 
     // Function to mark ComputeResource as free
-    function setComputeResourceFree(
-        uint256 _computeResourceId,
-        uint256 _jobId
-    ) public {
+    function setComputeResourceFree(uint256 _computeResourceId, uint256 _jobId)
+        public
+    {
         ComputeResource storage computeResource = computeResourceObjectsById[
             _computeResourceId
         ];
@@ -242,10 +242,11 @@ contract Resource {
     }
 
     // Function to check if a compute resource is associated with a job
-    function isComputeResourceInJob(
-        uint256 _computeResourceId,
-        uint256 _jobId
-    ) internal view returns (bool) {
+    function isComputeResourceInJob(uint256 _computeResourceId, uint256 _jobId)
+        internal
+        view
+        returns (bool)
+    {
         Job storage job = jobObjectsById[_jobId];
         for (uint256 i = 0; i < job.computeResourceIds.length; i++) {
             if (job.computeResourceIds[i] == _computeResourceId) {
@@ -256,9 +257,11 @@ contract Resource {
     }
 
     // Function to check if all compute resources in a job are marked as free
-    function areAllComputeResourcesFree(
-        uint256[] memory _computeResourceIds
-    ) internal view returns (bool) {
+    function areAllComputeResourcesFree(uint256[] memory _computeResourceIds)
+        internal
+        view
+        returns (bool)
+    {
         for (uint256 i = 0; i < _computeResourceIds.length; i++) {
             ComputeResource
                 storage computeResource = computeResourceObjectsById[
@@ -276,6 +279,8 @@ contract Resource {
         Job storage job = jobObjectsById[_jobId];
         require(job.status == JobStatus.RUNNING, "Job must be RUNNING");
         job.status = JobStatus.COMPLETED;
+
+        // TODO: Trasnfer the money based on score
     }
 
     // Buy/Sell Functions
@@ -319,9 +324,11 @@ contract Resource {
         return modelObjectsById[_id];
     }
 
-    function getComputeResourceDetails(
-        uint256 _id
-    ) public view returns (ComputeResource memory) {
+    function getComputeResourceDetails(uint256 _id)
+        public
+        view
+        returns (ComputeResource memory)
+    {
         return computeResourceObjectsById[_id];
     }
 
@@ -331,10 +338,10 @@ contract Resource {
 
     // Function to fetch Data objects for msg.sender
     function fetchMyData() public view returns (Data[] memory) {
-        uint count = dataIdCounter.current();
+        uint256 count = dataIdCounter.current();
         Data[] memory myData = new Data[](count);
 
-        for (uint i = 1; i <= count; i++) {
+        for (uint256 i = 1; i <= count; i++) {
             Data storage data = dataObjectsById[i];
             if (data.owner == msg.sender) {
                 myData[i - 1] = data;
@@ -346,10 +353,10 @@ contract Resource {
 
     // Function to fetch Model objects for msg.sender
     function fetchMyModels() public view returns (Model[] memory) {
-        uint count = modelIdCounter.current();
+        uint256 count = modelIdCounter.current();
         Model[] memory myModels = new Model[](count);
 
-        for (uint i = 1; i <= count; i++) {
+        for (uint256 i = 1; i <= count; i++) {
             Model storage model = modelObjectsById[i];
             if (model.owner == msg.sender) {
                 myModels[i - 1] = model;
@@ -365,12 +372,12 @@ contract Resource {
         view
         returns (ComputeResource[] memory)
     {
-        uint count = computeResourceIdCounter.current();
+        uint256 count = computeResourceIdCounter.current();
         ComputeResource[] memory myComputeResources = new ComputeResource[](
             count
         );
 
-        for (uint i = 1; i <= count; i++) {
+        for (uint256 i = 1; i <= count; i++) {
             ComputeResource
                 storage computeResource = computeResourceObjectsById[i];
             if (computeResource.owner == msg.sender) {
@@ -383,10 +390,10 @@ contract Resource {
 
     // Function to fetch Job objects for msg.sender
     function fetchMyJobs() public view returns (Job[] memory) {
-        uint count = jobIdCounter.current();
+        uint256 count = jobIdCounter.current();
         Job[] memory myJobs = new Job[](count);
 
-        for (uint i = 1; i <= count; i++) {
+        for (uint256 i = 1; i <= count; i++) {
             Job storage job = jobObjectsById[i];
             if (job.owner == msg.sender) {
                 myJobs[i - 1] = job;
@@ -456,5 +463,15 @@ contract Resource {
         }
 
         return activeComputeResources;
+    }
+
+    // Helper functions
+
+    function calculateComputeResourceScore(uint256 _ram, uint256 _gpu)
+        internal
+        pure
+        returns (uint256)
+    {
+        return _ram + _gpu * 2;
     }
 }
