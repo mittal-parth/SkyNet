@@ -1,5 +1,5 @@
 // import { useState } from "react";
-import React from "react";
+import React, { useState } from "react";
 import { useEffect } from "react";
 
 import { invoke } from "@tauri-apps/api/tauri";
@@ -25,85 +25,110 @@ const SimpleChatMessage = new protobuf.Type("SimpleChatMessage")
   .add(new protobuf.Field("ACK", 5, "uint32"))
   .add(new protobuf.Field("SYN", 6, "uint32"));
 
-let clientId = parseInt(import.meta.env.VITE_ID);
+let clientId = import.meta.env.VITE_ID
 
-const WORKERS = ["0x8c42E233514011BfcFdF3e0c1258AfaDdAC5C191"];
+const WORKERS = ["0xd46c37532b3473834cDB6DdBF48287B8E179e4a4"];
 const EPOCHS = 1;
 
-const reducer = (state, action) => {
-  const _inPipe = { ...state.inPipe };
-  const ACK = action.ACK ?? 0;
-
-  switch (action.type) {
-    case "ADD_MESSAGE":
-      console.log("Message received!");
-      const _messages = state.messages;
-      // console.log(action.message.body)
-      _messages.push(JSON.stringify(action.message));
-      return { ...state, messages: _messages };
-    case "ACK":
-      delete _inPipe[action.id];
-      return { ...state, inPipe: _inPipe };
-    case "SEND_MESSAGE":
-      const protoMsg = SimpleChatMessage.create({
-        timestamp: new Date(),
-        srcId: clientId,
-        dstId: action.dstId,
-        body: JSON.stringify(action.body),
-        ACK: ACK,
-        SYN: action.SYN ?? state.sendCounter + 1,
-      });
-      const payload = SimpleChatMessage.encode(protoMsg).finish();
-
-      // Send over Waku Relay
-      action.waku.relay.send(Encoder, { payload });
-      console.log("Message sent!");
-
-      if (ACK == 0) {
-        _inPipe[state.sendCounter + 1] = {
-          dstId: action.dstId,
-          body: action.body,
-          SYN: state.sendCounter + 1,
-        };
-      } else {
-        console.log("Sending ACK!");
-      }
-
-      return {
-        ...state,
-        inPipe: _inPipe,
-        sendCounter:
-          ACK == 0 && !action.SYN ? state.sendCounter + 1 : state.sendCounter,
-      };
-    // case "RESEND":
-    //   Object.values(state.inPipe).forEach(({dstId, body, SYN}) => {
-    //     console.log(`Resending ${SYN} ...`)
-    //     const protoMsg = SimpleChatMessage.create({
-    //       timestamp: new Date(),
-    //       srcId: clientId,
-    //       dstId: dstId,
-    //       body: JSON.stringify(body),
-    //       ACK: ACK,
-    //       SYN: SYN
-    //     });
-    //     const payload = SimpleChatMessage.encode(protoMsg).finish();
-
-    //     // Send over Waku Relay
-    //     action.waku.relay.send(Encoder, { payload });
-    //   })
-    //   return {...state}
-    default:
-      return state;
-  }
-};
-
-const initState = {
-  sendCounter: 0,
-  messages: [],
-  inPipe: {},
-};
 
 function JobPage() {
+  const [trainedWeights, setTrainedWeights] = useState("");
+
+  const reducer = (state, action) => {
+    const _inPipe = {...state.inPipe}
+    const ACK = action.ACK ?? 0
+    const _messages = [...state.messages]
+  
+    switch (action.type) {
+      case "ADD_MESSAGE":
+        console.log("Message received!")
+        _messages.push(JSON.stringify(action.message))
+        const weights = JSON.parse(action.message.body).weights
+        if (weights) {
+          invoke('store_weights', {weights})
+          console.log("Getting trained weights ...")
+          invoke('get_weights').then((weights) => {
+            console.log(weights)
+            setTrainedWeights(weights)
+          })
+        }
+        return { ...state, messages: _messages, serverId: action.message.srcId }
+      case "ACK":
+        delete _inPipe[action.id]
+        return { ...state, inPipe: _inPipe }
+      case "SEND_MESSAGE":
+        const protoMsg = SimpleChatMessage.create({
+          timestamp: new Date(),
+          srcId: clientId,
+          dstId: action.dstId,
+          body: JSON.stringify(action.body),
+          ACK: ACK,
+          SYN: action.SYN ?? state.sendCounter + 1
+        });
+        const payload = SimpleChatMessage.encode(protoMsg).finish();
+    
+        // Send over Waku Relay
+        action.waku.relay.send(Encoder, { payload });
+        console.log("Message sent!")
+  
+        if (ACK == 0) {
+          _inPipe[state.sendCounter + 1] = {
+            dstId: action.dstId,
+            body: action.body,
+            SYN: state.sendCounter + 1,
+          }
+        }
+        else {
+          console.log("Sending ACK!")
+        }
+  
+        return {
+          ...state,
+          inPipe: _inPipe,
+          sendCounter: ACK == 0 && !action.SYN ? state.sendCounter + 1 : state.sendCounter
+        };
+      // case "RESEND":
+      //   Object.values(state.inPipe).forEach(({dstId, body, SYN}) => {
+      //     console.log(`Resending ${SYN} ...`)
+      //     const protoMsg = SimpleChatMessage.create({
+      //       timestamp: new Date(),
+      //       srcId: clientId,
+      //       dstId: dstId,
+      //       body: JSON.stringify(body),
+      //       ACK: ACK,
+      //       SYN: SYN
+      //     });
+      //     const payload = SimpleChatMessage.encode(protoMsg).finish();
+      
+      //     // Send over Waku Relay
+      //     action.waku.relay.send(Encoder, { payload });
+      //   })
+      //   return {...state}
+      default:
+        return state
+    }
+  }
+
+  useEffect(() => {
+    if (trainedWeights !== "") {
+      console.log("Got new weights!")
+      dispatch({
+        type: "SEND_MESSAGE",
+        dstId: state.serverId,
+        body: {
+          "trained_weights": trainedWeights
+        },
+        waku: waku,
+      })
+    }
+  }, [trainedWeights])
+  
+  const initState = {
+    sendCounter: 0,
+    messages: [],
+    inPipe: {},
+    serverId: null
+  }
   const [waku, setWaku] = React.useState(undefined);
   const [wakuStatus, setWakuStatus] = React.useState("None");
 
@@ -123,6 +148,7 @@ function JobPage() {
   React.useEffect(() => {
     console.log("Message found!");
     if (!state.messages.length) return;
+    console.log("Message found!")
     const message = JSON.parse(state.messages[state.messages.length - 1]);
     console.log(`Message-${message.SYN} found!`);
     dispatch({
@@ -152,13 +178,13 @@ function JobPage() {
 
   const processIncomingMessage = React.useCallback((wakuMessage) => {
     console.log("Message received", wakuMessage);
+    console.log(wakuMessage)
     if (!wakuMessage.payload) return;
 
     const message = SimpleChatMessage.decode(wakuMessage.payload);
 
     if (message.dstId != clientId) return;
 
-    console.log(message);
     if (message.ACK) {
       dispatch({
         type: "ACK",

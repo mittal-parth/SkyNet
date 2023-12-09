@@ -11,7 +11,7 @@ fn greet(name: &str) -> String {
 #[tauri::command]
 fn get_weights() -> String {
     let python_command = Command::new("python3").arg("train.py");
-    let file = std::fs::File::open("weights_final.json").unwrap();
+    let file = std::fs::File::open("/home/mehul/.skynet/weights_final.json").unwrap();
     let reader = std::io::BufReader::new(file);
     let weights: serde_json::Value = serde_json::from_reader(reader).unwrap();
     println!("{:?}", weights);
@@ -21,7 +21,7 @@ fn get_weights() -> String {
 #[tauri::command]
 fn store_weights(weights: String) -> String {
     let json: serde_json::Value = serde_json::from_str(&weights).unwrap();
-    let file = std::fs::File::create("weights.json").unwrap();
+    let file = std::fs::File::create("/home/mehul/.skynet/weights.json").unwrap();
     let writer = std::io::BufWriter::new(file);
     serde_json::to_writer_pretty(writer, &json).unwrap();
     return "success".to_string();
