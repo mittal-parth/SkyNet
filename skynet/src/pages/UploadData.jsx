@@ -10,6 +10,8 @@ export default function UploadData() {
   const [dataDetails, setDataDetails] = useState({});
   const [file, setFile] = useState();
   const { data: walletClient} = useWalletClient();
+  const [dataHash, setdataHash] = useState(null);
+
 
   const { data, isLoading, isSuccess, write } = useContractWrite({
     address: CONTRACT_ADDRESS,
@@ -22,16 +24,18 @@ export default function UploadData() {
     console.log("Upload Data")
     console.log(dataDetails)
     console.log(fileHash)
-    write({
-      args: [dataDetails.title,fileHash,dataDetails.description,true,dataDetails.price],
-      from: walletClient.account.address
-    })
+    // write({
+    //   args: [dataDetails.title,fileHash,dataDetails.description,true,dataDetails.price],
+    //   from: walletClient.account.address
+    // })
+    setdataHash(fileHash)
     console.log("Data uploaded")
   };
 
 
   return (
     <FormPage
+    hash={dataHash}
       form={
         <Form
         walletClient = {walletClient}

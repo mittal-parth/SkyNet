@@ -11,7 +11,7 @@ export default function FormPage({hash, image, title, text, form, imageStyle }) 
         <div className={`md:flex shrink hidden mb-4 ${imageStyle}`}>
             </div>
         <img src = {cloudUpload} className=" w-96 h-96"/>
-        <p className="text-lg font-poppins text-white text-gray/70 max-w-[340px]">{text}</p>
+        <p className="text-lg font-poppins text-white text-gray/70 max-w-[340px]">{!hash ? text : "Secured by Lighthouse"}</p>
         {hash?<>
         <div className="mt-5 text-white font-semibold data-card-2 rounded-lg p-2">{hash}</div>
         <div className="flex items-center mt-5 text-white  font-semibold data-card-3 rounded-lg p-2 px-3">

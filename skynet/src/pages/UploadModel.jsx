@@ -22,10 +22,10 @@ export default function UploadModel() {
     console.log("Upload Model")
     console.log(modelDetails)
     console.log(modelHash)
-    // write({
-    //   args: [modelDetails.title,modelHash,modelDetails.description,true,modelDetails.price],
-    //   from: walletClient.account.address
-    // })
+    write({
+      args: [modelDetails.title,modelHash,modelDetails.description,true,modelDetails.price],
+      from: walletClient.account.address
+    })
     setModelHash(modelHash)
     console.log("Model uploaded")
   };
