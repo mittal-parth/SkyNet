@@ -30,16 +30,13 @@ const ModelMarket = ()=> {
     })
 
     if(data != null){
-      console.log("element12",data)
       data.map((element) => {
         if(element.owner==walletClient.account.address){
           element.isOwner=true;
-          console.log("asd",element)
           setOwnerModelObjects([...ownerModelObjects,element])
 
         }else{
           element.isOwner=false;
-          console.log("asd",element)
 
           setModelObjects([...modelObjects,element])
         }

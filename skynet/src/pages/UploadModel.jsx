@@ -19,7 +19,7 @@ export default function UploadModel() {
             placeholder: `MD 1`,
           },
           {
-            label: 'Prize (in ethereum)',
+            label: 'Price (in ethereum)',
             dataLabel: 'size',
             type: 'number'
           },

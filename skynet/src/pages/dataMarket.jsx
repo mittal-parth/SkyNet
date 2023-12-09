@@ -25,7 +25,6 @@ const DataMarket = () => {
   async function fetchDataObjects() {
     setdataObjects([]);
     setOwnerDataObjects([]);
-    const signer = await getWalletClient({chainId: 80001});
 
     const data = await readContract({
       address: CONTRACT_ADDRESS,
@@ -33,19 +32,19 @@ const DataMarket = () => {
       functionName: "fetchAllForSaleData",
     })
 
-    if(data != null){
+    if(walletClient && data != null){
       data.map((element) => {
-        if(element.owner==walletClient.account.address){
-          element.isOwner=true;
-          // To be removed
+        console.log("element is ",element.owner == walletClient.account.address)
+        console.log("wallet address is",walletClient.account.address)
+
+        if(walletClient && element.owner==walletClient.account.address){
           element.columns =["time","speed","rpm","fuellong","temp","time","speedlong","rpmlong"];
-          setOwnerDataObjects([...ownerDataObjects,element])
+          ownerDataObjects ? setOwnerDataObjects([...ownerDataObjects,element]) : setOwnerDataObjects([element])
 
         }else{
-          element.isOwner=false;
           element.columns =["time","speed","rpm","fuellong","temp","time","speedlong","rpmlong"];
           // To be removed
-          setdataObjects([...dataObjects,element])
+          dataObjects ? setdataObjects([...dataObjects,element]) : setdataObjects([element])
         }
       });
     }else{
@@ -56,13 +55,14 @@ const DataMarket = () => {
   }
 
   useEffect(() => {
-    if(isLoading) {
+    if(isLoading && walletClient) {
       return;
     }
 
     fetchDataObjects();
   }, [isLoading]);
-
+  console.log("Data Objects are ",dataObjects)
+  console.log("Owner Data Objects are ",ownerDataObjects)
   return (
     <div className="px-30">
       <div className="flex items-center ">
@@ -73,8 +73,7 @@ const DataMarket = () => {
       </div>
       <div className="flex flex-wrap mx-10 my-10">
         {(dataObjects && dataObjects.length > 0 )? dataObjects.map((element)=>{
-          console.log("element",element)
-          return <DataCard dataObject={element} />;
+          return <DataCard dataObject={element} isOwner={false}  />;
         }): <div className="font-poppins mr-2 text-4xl text-white">No data found</div>}
       </div>
       <div className="mx-10 my-10">{/* <ModelCard/> */}</div>
@@ -85,10 +84,10 @@ const DataMarket = () => {
         </a>
       </div>
       <div className="flex flex-wrap mx-10 my-10">
-        {ownerDataObjects && ownerDataObjects.length != 0? ownerDataObjects.forEach((element) => {
-          console.log(data.title)
-          return <DataCard dataObject={element} />;
-        }) : <div className="font-poppins mr-2 text-4xl text-white">No data found</div>}
+        {ownerDataObjects && ownerDataObjects.length != 0 ?<div> {ownerDataObjects.map((element,index) => {
+          console.log("lenght ",ownerDataObjects.length)
+          return <DataCard dataObject={element} isOwner={true} key={index}/>
+        }) }</div>: <div className="font-poppins mr-2 text-4xl text-white">No data found</div>}
       </div>
     </div>
   );

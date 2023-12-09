@@ -15,7 +15,6 @@ export const getContract = (walletClient) => {
     skynetABI,
     walletClient
   );
-//   console.log("SKYNET", signer);
 
 
 

@@ -6,8 +6,8 @@ import ABI from "../constants/skynetabi.json";
 const skynetABI=ABI.abi;
 
 
-export default function DataCard({ dataObject }) {
-  console.log(dataObject)
+export default function DataCard({ dataObject, isOwner }) {
+  console.log("Data Object is ",dataObject)
   const { data, isLoading, isSuccess, write } = useContractWrite({
     address: CONTRACT_ADDRESS,
     abi: skynetABI,
@@ -28,7 +28,7 @@ export default function DataCard({ dataObject }) {
       <div className="">
         <div className="flex justify-between items-center">
           <h5 className="mb-2 text-2xl  font-semibold tracking-tight text-white dark:text-white font-poppins">
-            {dataObject.fileAddress}
+            {dataObject.title}
           </h5>
           <div className="flex items-center">
             <SiSolidity color="white" />
@@ -52,13 +52,13 @@ export default function DataCard({ dataObject }) {
           </div>
         </div>
       </div>
-      {dataObject.isOwner ? (
+      {isOwner ? (
         <div
           className={` px-2 py-1  my-1 text-sm font-medium font-poppins text-center text-white ${
-            !data.isActive ? "bg-green-600" : "bg-red-700"
+            !dataObject.isForSale ? "bg-green-600" : "bg-red-700"
           } rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800`}
         >
-          {data.isForSale ? "Unlist" : "List"}
+          {dataObject.isForSale ? "Unlist" : "List"}
         </div>
       ) : (
         <a onClick={!isLoading? buyData: ()=>{console.log("Loading")}}><div className=" px-2 py-1  mt-6 text-sm font-medium font-poppins text-center text-white bg-green-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
