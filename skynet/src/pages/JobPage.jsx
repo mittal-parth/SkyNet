@@ -29,6 +29,7 @@ let clientId = import.meta.env.VITE_ID;
 
 const WORKERS = ["0x8c42E233514011BfcFdF3e0c1258AfaDdAC5C191"];
 const EPOCHS = 1;
+const N_WORKERS = 2;
 
 function JobPage() {
   const [trainedWeights, setTrainedWeights] = useState("");
@@ -48,7 +49,7 @@ function JobPage() {
           console.log("Getting trained weights ...");
           invoke("get_weights").then((weights) => {
             console.log(weights);
-            setTrainedWeights({weights, "nonce": state.sendCounter});
+            setTrainedWeights({ weights, nonce: state.sendCounter });
           });
         }
         const trained_weights = JSON.parse(action.message.body).trained_weights;
@@ -265,7 +266,21 @@ function JobPage() {
         <button onClick={sendMessageOnClick} disabled={wakuStatus !== "Ready"}>
           Send Message
         </button>
-        <ul>
+        <div class="flex justify-between mb-1">
+          <span class="text-base font-medium text-blue-700 dark:text-white">
+            Progress
+          </span>
+          <span class="text-sm font-medium text-blue-700 dark:text-white">
+            {state.messages.length / (N_WORKERS * EPOCHS)}
+          </span>
+        </div>
+        <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+          <div
+            class="bg-blue-600 h-2.5 rounded-full"
+            style={{ width: state.messages.length / (N_WORKERS * EPOCHS) }}
+          ></div>
+        </div>
+        {/* <ul>
           {state.messages.map((msg) => {
             return (
               <li>
@@ -273,8 +288,8 @@ function JobPage() {
               </li>
             );
           })}
-        </ul>
-        <p>In pipe: {Array.from(Object.keys(state.inPipe)).join(" ")}</p>
+        </ul> */}
+        {/* <p>In pipe: {Array.from(Object.keys(state.inPipe)).join(" ")}</p> */}
         <button
           onClick={async () => {
             for (let ep = 0; ep < EPOCHS; ep++) {
