@@ -4,7 +4,6 @@ import DropZone from "./DropZone";
 import {  useSignMessage } from "wagmi";
 import lighthouse from "@lighthouse-web3/sdk";
 import React from "react";
-import env from "react-dotenv";
 // import { uploadFile } from "@/utils";
 // import { LoaderContext } from "@/context/loaderContext";
 // import { SnackbarContext } from "@/context/snackbarContext";
@@ -35,56 +34,16 @@ export default function Form({walletClient, handleSubmit, fields, setData, data 
         continue;
       }
       try {
-          // const encryptionAuth = await signAuthMessage();
-          // if (!encryptionAuth) {
-            // console.error("Failed to sign the message.");
-            // return;
-          // }
-          // const { signature, signerAddress } = encryptionAuth;
-
-          // Upload file with encryption
-          console.log(fields)
-          console.log(field.file)
-          console.log("env", process.env.REACT_APP_LH_API_KEY);
-          console.log(field.file.path)
-          const output =await lighthouse.upload(field.file, '6c36b2b6.5289ffbfc39840a681d1a5ac80878d02', false, null, ()=>{})
-          
-          console.log("Encrypted File Status:", output);
+        console.log("Uploading the file")  
+        lighthouse.upload(field.file, '6c36b2b6.5289ffbfc39840a681d1a5ac80878d02', false, null, ()=>{}).then(async (output) => {
+          console.log("File uploaded", output)
+          await handleSubmit(output.data.Hash);
+        })
           
       } catch (err) {
-        // const hashOfFiles = await uploadFile(Object.values(field.file));
-
-        // let fileNames = field.file.map((f) => f.path);
-
-        // const data = {}
-        // data[field.dataLabel] = []
-
-        // hashOfFiles.forEach((hash, index) => {
-        //     const f = {}
-        //     f.name = fileNames[index]?.split(".")[0] || "greentrust"
-        //     f.hash = hash[0].hash
-        //     data[field.dataLabel] = [...data[field.dataLabel], f]
-        // });
-
-        // field.setFile(JSON.stringify(data));
-        // fileHashes.push(JSON.stringify(data))
-
-        console.log(`form debug 1: ${err}`);
+        console.log(`${err}`);
       }
     }
-
-    try {
-      // await handleSubmit(...fileHashes);
-      console.log("form submitted 1 ");
-    } catch (err) {
-      console.log(`form debug: ${err}`);
-    }
-    // setLoading(false);
-  }
-  const onFileChange = (event) => {
-    console.log("event", event.target.files[0])
-    const setFile = fields.setFile
-    setDataFile(event.target.files[0]);
   }
 
   return (
@@ -93,8 +52,7 @@ export default function Form({walletClient, handleSubmit, fields, setData, data 
         {fields.map((field) => (
           <>
             {field.isFile ? (
-              <input type="file" onChange={onFileChange}/>
-              // <DropZone label={field.label} setFiles={field.setFile} />
+              <DropZone label={field.label} setFiles={field.setFile} />
             ) : (
               <InputBox
                 label={field.label}

@@ -11,11 +11,8 @@ export default function DropZone({ label, setFiles }) {
     const { getRootProps, getInputProps, open, acceptedFiles } = useDropzone({
         multiple: false,
     });
-
+    setFiles(acceptedFiles);
     const files = acceptedFiles.map(file => {
-        console.log("setting files",file.path)
-        setFiles(file);
-        
         return (<li key={file.path}>
             <Info text={`${file.path} - ${file.size} bytes`} icon={faFile} style="text-gray" />
         </li>)
