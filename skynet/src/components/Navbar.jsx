@@ -37,7 +37,7 @@ import {close, logo, menu} from '../assets'
 import {navLinks} from '../constants'
 import {Routes, Route, useNavigate} from 'react-router-dom';
 
-const NavBar = () => {
+const Navbar = () => {
   const [toggle, setToggle] = useState(false)
   const navigate = useNavigate(); 
 
@@ -57,10 +57,8 @@ const NavBar = () => {
           })
         }
       </ul>
-
-      
     </nav>
   )
 }
 
-export default NavBar
+export default Navbar
