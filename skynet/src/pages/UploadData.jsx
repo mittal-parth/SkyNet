@@ -3,7 +3,6 @@ import Form from "../components/Form";
 import { useWalletClient, useSignMessage } from "wagmi";
 import FormPage from "../components/FormPage";
 import lighthouse from "@lighthouse-web3/sdk"
-
 export default function UploadData() {
   const { data: walletClient, isError, isLoading } = useWalletClient();
   // const signAuthMessage = async () => {

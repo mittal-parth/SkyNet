@@ -6,13 +6,13 @@ import { BrowserRouter } from "react-router-dom";
 import "@rainbow-me/rainbowkit/styles.css";
 import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
-import { polygonMumbai } from "wagmi/chains";
-import { publicProvider } from "wagmi/providers/public";
+import { arbitrumGoerli } from "wagmi/chains";
+import {  publicProvider } from "wagmi/providers/public";
 
 import "./styles.css";
 
 const { chains, publicClient } = configureChains(
-  [polygonMumbai],
+  [arbitrumGoerli],
   [publicProvider()]
 );
 

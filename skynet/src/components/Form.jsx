@@ -3,14 +3,15 @@ import Button from "./Button2";
 import DropZone from "./DropZone";
 import {  useSignMessage } from "wagmi";
 import lighthouse from "@lighthouse-web3/sdk";
-
+import React from "react";
+import env from "react-dotenv";
 // import { uploadFile } from "@/utils";
 // import { LoaderContext } from "@/context/loaderContext";
 // import { SnackbarContext } from "@/context/snackbarContext";
-
+import { useState } from "react";
 export default function Form({walletClient, handleSubmit, fields, setData, data }) {
   const fileHashes = [];
-
+  const [dataFile, setDataFile] = useState(null);
   const progressCallback = (progressData) => {
     let percentageDone =
       100 - (progressData?.total / progressData?.uploaded)?.toFixed(2);
@@ -34,21 +35,19 @@ export default function Form({walletClient, handleSubmit, fields, setData, data 
         continue;
       }
       try {
-          const encryptionAuth = await signAuthMessage();
-          if (!encryptionAuth) {
-            console.error("Failed to sign the message.");
-            return;
-          }
-          const { signature, signerAddress } = encryptionAuth;
+          // const encryptionAuth = await signAuthMessage();
+          // if (!encryptionAuth) {
+            // console.error("Failed to sign the message.");
+            // return;
+          // }
+          // const { signature, signerAddress } = encryptionAuth;
 
           // Upload file with encryption
-          const output = await lighthouse.uploadEncrypted(
-            field.file,
-            apiKey,
-            signerAddress,
-            signature,
-            progressCallback
-          );
+          console.log(fields)
+          console.log(field.file)
+          console.log("env", process.env.REACT_APP_LH_API_KEY);
+          console.log(field.file.path)
+          const output =await lighthouse.upload(field.file, '6c36b2b6.5289ffbfc39840a681d1a5ac80878d02', false, null, ()=>{})
           
           console.log("Encrypted File Status:", output);
           
@@ -82,6 +81,11 @@ export default function Form({walletClient, handleSubmit, fields, setData, data 
     }
     // setLoading(false);
   }
+  const onFileChange = (event) => {
+    console.log("event", event.target.files[0])
+    const setFile = fields.setFile
+    setDataFile(event.target.files[0]);
+  }
 
   return (
     <div className="mb-6 font-comfortaa w-full data-card p-10 rounded-xl">
@@ -89,7 +93,8 @@ export default function Form({walletClient, handleSubmit, fields, setData, data 
         {fields.map((field) => (
           <>
             {field.isFile ? (
-              <DropZone label={field.label} setFiles={field.setFile} />
+              <input type="file" onChange={onFileChange}/>
+              // <DropZone label={field.label} setFiles={field.setFile} />
             ) : (
               <InputBox
                 label={field.label}
