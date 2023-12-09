@@ -29,7 +29,7 @@ const wagmiConfig = createConfig({
 });
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <WagmiConfig config={wagmiConfig}>
       <RainbowKitProvider chains={chains}>
         <BrowserRouter>
@@ -37,5 +37,5 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         </BrowserRouter>
       </RainbowKitProvider>
     </WagmiConfig>
-  </React.StrictMode>
+  // </React.StrictMode>
 );

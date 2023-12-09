@@ -10,6 +10,13 @@ contract Resource {
         FREE,
         IN_USE
     }
+
+    enum JobStatus {
+        INITIALISED,
+        RUNNING,
+        COMPLETED
+    }
+
     // Data struct
     struct Data {
         uint256 id;
@@ -61,6 +68,14 @@ contract Resource {
     // Mappings to store instances of each struct by their id
     mapping(uint256 => Data) public dataObjectsById;
     mapping(uint256 => Model) public modelObjectsById;
+    mapping(uint256 => ComputeResource) public computeResourceObjectsById;
+    mapping(uint256 => Job) public jobObjectsById;
+
+    // Counters for generating unique IDs
+    Counters.Counter private dataIdCounter;
+    Counters.Counter private modelIdCounter;
+    Counters.Counter private computeResourceIdCounter;
+    Counters.Counter private jobIdCounter;
 
     // Functions to create and retrieve objects with generated IDs
     function createData(
@@ -132,7 +147,11 @@ contract Resource {
         );
     }
 
-    function createJob(uint256 _minScorePerComputeResource, uint256 _computeResourceCount, uint256 _maxRatePerMin) public {
+    function createJob(
+        uint256 _minScorePerComputeResource,
+        uint256 _computeResourceCount,
+        uint256 _maxRatePerMin
+    ) public {
         jobIdCounter.increment();
         uint256 newId = jobIdCounter.current();
 
@@ -161,6 +180,105 @@ contract Resource {
             "Exceeded maximum array length"
         );
         job.computeResourceIds.push(_computeResourceId);
+    }
+
+    // Function to start a Job
+    function startJob(uint256 _jobId) public {
+        Job storage job = jobObjectsById[_jobId];
+        job.status = JobStatus.RUNNING;
+
+        // Change the status of compute resources to IN_USE
+        setComputeResourcesInUse(job.computeResourceIds);
+    }
+
+    // Function to set ComputeResource status to IN_USE
+    function setComputeResourcesInUse(
+        uint256[] memory _computeResourceIds
+    ) internal {
+        for (uint256 i = 0; i < _computeResourceIds.length; i++) {
+            uint256 computeResourceId = _computeResourceIds[i];
+            ComputeResource
+                storage computeResource = computeResourceObjectsById[
+                    computeResourceId
+                ];
+
+            require(
+                computeResource.status == ComputeResourceStatus.FREE,
+                "ComputeResource is not free"
+            );
+
+            computeResource.status = ComputeResourceStatus.IN_USE;
+        }
+    }
+
+    // Function to mark ComputeResource as free
+    function setComputeResourceFree(
+        uint256 _computeResourceId,
+        uint256 _jobId
+    ) public {
+        ComputeResource storage computeResource = computeResourceObjectsById[
+            _computeResourceId
+        ];
+        Job storage job = jobObjectsById[_jobId];
+
+        require(
+            computeResource.status == ComputeResourceStatus.IN_USE,
+            "Compute Resource must be IN_USE to mark as FREE"
+        );
+        require(job.status == JobStatus.RUNNING, "Job must be RUNNING");
+        require(
+            isComputeResourceInJob(_computeResourceId, _jobId),
+            "Compute Resource not associated with the Job"
+        );
+
+        // Set the resource status as free
+        computeResource.status = ComputeResourceStatus.FREE;
+
+        // Check if all compute resources in the job are marked as free
+        if (areAllComputeResourcesFree(job.computeResourceIds)) {
+            // If yes, mark the job as completed
+            setJobCompleted(_jobId);
+        }
+    }
+
+    // Function to check if a compute resource is associated with a job
+    function isComputeResourceInJob(
+        uint256 _computeResourceId,
+        uint256 _jobId
+    ) internal view returns (bool) {
+        Job storage job = jobObjectsById[_jobId];
+        for (uint256 i = 0; i < job.computeResourceIds.length; i++) {
+            if (job.computeResourceIds[i] == _computeResourceId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Function to check if all compute resources in a job are marked as free
+    function areAllComputeResourcesFree(
+        uint256[] memory _computeResourceIds
+    ) internal view returns (bool) {
+        for (uint256 i = 0; i < _computeResourceIds.length; i++) {
+            ComputeResource
+                storage computeResource = computeResourceObjectsById[
+                    _computeResourceIds[i]
+                ];
+            if (computeResource.status != ComputeResourceStatus.FREE) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // Function to mark Job as Completed
+    function setJobCompleted(uint256 _jobId) internal {
+        Job storage job = jobObjectsById[_jobId];
+        require(
+            job.status == JobStatus.RUNNING,
+            "Job must be RUNNING"
+        );
+        job.status = JobStatus.COMPLETED;
     }
 
     // Functions to retrieve objects by their id
@@ -248,5 +366,4 @@ contract Resource {
 
         return myJobs;
     }
-
 }
