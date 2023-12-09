@@ -28,7 +28,7 @@ fn store_weights(weights: String) -> String {
 }
 
 #[tauri::command]
-fn store_n(weights: &str, number: u32) -> String {
+fn store_n(weights: &str, number: &str) -> String {
     // convert string to json
     let json: serde_json::Value = serde_json::from_str(weights).unwrap();
     // write to a json file called weights_final.json
