@@ -33,6 +33,14 @@ const N_WORKERS = 2;
 
 function JobPage() {
   const [trainedWeights, setTrainedWeights] = useState("");
+  const [pendingWeights, setPendingWeights] = useState(null)
+
+  useEffect(() => {
+    if (pendingWeights == null) return;
+    if (pendingWeights == 0) {
+      invoke('aggregator', { number: WORKERS.length })
+    }
+  }, [pendingWeights])
 
   const reducer = (state, action) => {
     const _inPipe = { ...state.inPipe };
@@ -292,6 +300,7 @@ function JobPage() {
         {/* <p>In pipe: {Array.from(Object.keys(state.inPipe)).join(" ")}</p> */}
         <button
           onClick={async () => {
+            setPendingWeights(WORKERS.length)
             for (let ep = 0; ep < EPOCHS; ep++) {
               let initialWeights = {};
               if (ep == 0) {
