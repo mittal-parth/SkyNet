@@ -64,7 +64,7 @@ export default function JobConfig() {
           data={jobDetails}
         />
       }
-      title="Decide your Job Configuration "
+      title="Job Configuration "
       text="Provide the details asked in the form"
       imageStyle="!max-w-[30vw]"
     />
