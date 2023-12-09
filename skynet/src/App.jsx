@@ -8,6 +8,8 @@ import GetNotifs from "./pages/GetNotifs";
 import Landing from "./pages/Landing";
 import Graph from "./pages/Graph";
 import Market from "./pages/Market";
+import JobConfig from "./pages/JobConfig"
+
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 const App = () => {
@@ -24,6 +26,7 @@ const App = () => {
         <Route path="/uploadmodel" element={<UploadModel />} />
         <Route path="/landing" element={<Landing />} />
         <Route path="/job" element={<JobPage />} />
+        <Route path="/jobConfig" element={<JobConfig />} />
         <Route path="/graph" element={<Graph />} />
         <Route path="/market" element={<Market />} />
       </Routes>

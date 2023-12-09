@@ -36,14 +36,14 @@ export default function Form({walletClient, handleSubmit, fields, setData, data 
       try {
         console.log("Uploading the file")  
         lighthouse.upload(field.file, '6c36b2b6.5289ffbfc39840a681d1a5ac80878d02', false, null, ()=>{}).then(async (output) => {
-          console.log("File uploaded", output)
           await handleSubmit(output.data.Hash);
         })
-          
+        return;// This is hacky, and is written under the assumption that there is only one file field
       } catch (err) {
         console.log(`${err}`);
       }
     }
+    handleSubmit(null);
   }
 
   return (
