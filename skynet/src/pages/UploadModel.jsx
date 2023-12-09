@@ -19,15 +19,15 @@ export default function UploadModel() {
     functionName: 'createModel',
   })
   const handleSubmit = async (modelHash) => {
-    console.log("Upload Model")
-    console.log(modelDetails)
-    console.log(modelHash)
+    if(modelHash==null){
+      alert("Please upload a file")
+      return
+    }
     write({
       args: [modelDetails.title,modelHash,modelDetails.description,true,modelDetails.price],
       from: walletClient.account.address
     })
     setModelHash(modelHash)
-    console.log("Model uploaded")
   };
 
 
