@@ -1,4 +1,6 @@
 import React from "react";
+import { ethers } from "ethers";
+
 import DataCard from "../components/DataCard";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { contractCall } from "../utils";
@@ -10,98 +12,56 @@ import { getWalletClient , getPublicClient } from "@wagmi/core";
 import { readContract } from '@wagmi/core'
 import { CONTRACT_ADDRESS} from "../config";
 import ABI from "../constants/skynetabi.json";
+
+
 const skynetABI=ABI.abi;
 const DataMarket = () => {
-  // const { data: walletClient, isError, isLoading } = useWalletClient()
-  // console.log(walletClient, isLoading);
-  // const signer = useEthersSigner(80001, walletClient);
-  // console.log(signer);
 
   const navigate = useNavigate();
   const [dataObjects, setdataObjects] = useState([]);
+  const [ownerDataObjects,setOwnerDataObjects] = useState([]);
   const { data: walletClient, isError, isLoading } = useWalletClient();
 
   async function fetchDataObjects() {
+    setdataObjects([]);
+    setOwnerDataObjects([]);
     const signer = await getWalletClient({chainId: 80001});
 
     const data = await readContract({
       address: CONTRACT_ADDRESS,
       abi: skynetABI,
-      functionName: 'fetchMyData',
+      functionName: "fetchAllForSaleData",
     })
-    console.log(data)
-    // console.log(walletClient)
-    // try {
 
-    //   // const contract = getContract({
-    //   //   address: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
-    //   //   abi: ensRegistryABI,
-    //   //   signer,
-    //   // })
-    //   // console.log(signer);
-    //   console.log(walletClient);
-    //   const dataObjects = await contractCall("fetchMyData", [], signer);
-    //   console.log(dataObjects.data);
-    // } catch (err) {
-    //   console.log(err);
-    //   // setSnackbarInfo({ ...snackbarInfo, open: true, message: `Error ${err.code}: ${err.message}` })
-    // }
+    if(data != null){
+      data.map((element) => {
+        if(element.owner==walletClient.account.address){
+          element.isOwner=true;
+          // To be removed
+          element.columns =["time","speed","rpm","fuellong","temp","time","speedlong","rpmlong"];
+          setOwnerDataObjects([...ownerDataObjects,element])
+
+        }else{
+          element.isOwner=false;
+          element.columns =["time","speed","rpm","fuellong","temp","time","speedlong","rpmlong"];
+          // To be removed
+          setdataObjects([...dataObjects,element])
+        }
+      });
+    }else{
+      console.log("No data found")
+    }
+    
+
   }
 
   useEffect(() => {
     if(isLoading) {
       return;
     }
-    console.log(walletClient)
+
     fetchDataObjects();
   }, [isLoading]);
-
-  const tempDataList = [
-    {
-      dataname: "Sensor",
-      description: "This is a sensor data of a car",
-      price: 100,
-      columns: [
-        "time",
-        "speed",
-        "rpm",
-        "fuellong",
-        "temp",
-        "time",
-        "speedlong",
-        "rpmlong",
-      ],
-      isActive: true,
-    },
-    {
-      dataname: "Flowers",
-      description: "This is a collection of all flowers",
-      price: 1000,
-      columns: ["colour", "size", "type"],
-      isActive: false,
-    },
-    {
-      dataname: "Weather",
-      description: "This is weather data",
-      price: 500,
-      columns: ["temperature", "humidity", "wind_speed", "precipitation"],
-      isActive: true,
-    },
-    {
-      dataname: "Stocks",
-      description: "Stock market data",
-      price: 800,
-      columns: ["symbol", "price", "volume", "change_percentage"],
-      isActive: false,
-    },
-    {
-      dataname: "SocialMedia",
-      description: "Social media activity",
-      price: 300,
-      columns: ["user_id", "post_count", "followers", "likes"],
-      isActive: true,
-    },
-  ];
 
   return (
     <div className="px-30">
@@ -112,9 +72,10 @@ const DataMarket = () => {
         <IoIosAddCircleOutline size={40} color="green" />
       </div>
       <div className="flex flex-wrap mx-10 my-10">
-        {tempDataList.map((data) => {
-          return <DataCard data={data} isOwned={true} />;
-        })}
+        {(dataObjects && dataObjects.length > 0 )? dataObjects.map((element)=>{
+          console.log("element",element)
+          return <DataCard data={element} />;
+        }): <div className="font-poppins mr-2 text-4xl text-white">No data found</div>}
       </div>
       <div className="mx-10 my-10">{/* <ModelCard/> */}</div>
       <div className="flex items-center">
@@ -124,9 +85,10 @@ const DataMarket = () => {
         </a>
       </div>
       <div className="flex flex-wrap mx-10 my-10">
-        {tempDataList.map((data) => {
+        {ownerDataObjects && ownerDataObjects.length != 0? ownerDataObjects.forEach((data) => {
+          console.log(data.title)
           return <DataCard data={data} isOwned={false} />;
-        })}
+        }) : <div className="font-poppins mr-2 text-4xl text-white">No data found</div>}
       </div>
     </div>
   );
