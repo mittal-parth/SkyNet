@@ -23,6 +23,7 @@ const App = () => {
         <Route path="/uploaddata" element={<UploadData />} />
         <Route path="/uploadmodel" element={<UploadModel />} />
         <Route path="/landing" element={<Landing />} />
+        <Route path="/job" element={<JobPage />} />
         <Route path="/graph" element={<Graph />} />
         <Route path="/market" element={<Market />} />
       </Routes>

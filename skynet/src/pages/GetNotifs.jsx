@@ -2,10 +2,19 @@ import React from "react";
 import { PushAPI, CONSTANTS } from "@pushprotocol/restapi";
 import { useWalletClient } from "wagmi";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import {Routes, Route, useNavigate} from 'react-router-dom';
+
 // PushAPI.initialize(signer, {options?});
 // signer - pass the signer from your app and set env to 'CONSTANTS.ENV.PROD' for mainnet app
 // options? - optional, can pass initialization parameters for customization
+
+
+// Be sure to set `build.withGlobalTauri` in `tauri.conf.json` to true
+// const invoke = window.__TAURI__.invoke
+
 export default function GetNotifs() {
+  const navigate = useNavigate();
   const [notifs, setNotifs] = useState([]);
 
   const { data: walletClient, isError, isLoading } = useWalletClient();
@@ -41,6 +50,7 @@ export default function GetNotifs() {
     <div>
       <h1>Notifications</h1>
       <h2>{notifs}</h2>
+      <button onClick={() => navigate("/job")}>Create Job</button>
     </div>
   );
 }
