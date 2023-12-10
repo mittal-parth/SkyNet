@@ -275,14 +275,17 @@ function JobPage() {
       <header className="App-header">
         <div className="flex justify-center">
           <img src={wakuLogo} alt="Waku" class="w-16 h-6 me-2 -ms-1" />
-          <p className="flex justify-center">: {wakuStatus}</p>
+          <p className="flex text-white font-poppins text-xl justify-center">: {wakuStatus}</p>
         </div>
+        <div className="flex my-3 justify-center">
         <input type="text" ref={dstId} />
+
+        </div>
 
         <Graph />
 
         <div class="flex justify-evenly mt-12">
-          <span class="text-base font-medium text-blue-700 dark:text-white">
+          <span class="text-base font-medium  font-poppins text-xl text-white-700 text-white">
             Progress
           </span>
           <div class="w-1/2 bg-gray-200 rounded-full h-4 dark:bg-gray-700">
@@ -307,7 +310,7 @@ function JobPage() {
         <div className="flex justify-center mt-10">
           <button
             type="button"
-            class="text-gray-900 bg-gradient-to-r from-purple-200 via-purple-400 to-purple-500 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+            className="text-white bg-gradient-to-r from-purple-200 via-purple-400 to-purple-500 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
             onClick={async () => {
               for (let ep = 0; ep < EPOCHS; ep++) {
                 let initialWeights = {};
@@ -333,7 +336,7 @@ function JobPage() {
             }}
             disabled={wakuStatus !== "Ready"}
           >
-            <div className="flex">
+            <div className="flex text-black">
               <VscDebugStart size="1rem" className="mr-2"/>
               Start
             </div>
@@ -341,7 +344,7 @@ function JobPage() {
 
           <button
             type="button"
-            class="text-gray-900 bg-gradient-to-r from-yellow-100 via-yellow-200 to-yellow-300 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:focus:ring-yellow-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+            class="text-black bg-gradient-to-r from-yellow-100 via-yellow-200 to-yellow-300 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:focus:ring-yellow-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
           >
             <div className="flex">
               <img src={scroll} alt="Scroll" class="w-6 h-6 me-2 -ms-1" />
