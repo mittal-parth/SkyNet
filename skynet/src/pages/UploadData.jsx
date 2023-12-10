@@ -74,7 +74,7 @@ export default function UploadData() {
     text="Provide the details asked in the form"
     hashList = {[]}
       //   image={farmer}
-      imageStyle="!max-w-[30vw]"
+    imageStyle="!max-w-[30vw]"
     />
   );
 }

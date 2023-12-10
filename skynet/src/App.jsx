@@ -11,13 +11,13 @@ import Market from "./pages/Market";
 import JobConfig from "./pages/JobConfig"
 
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import Layout from "./components/Layout";
 
 const App = () => {
   return (
     <>
-    <div className="bg-primary w-full h-screen overflow-y-auto ">
+    <Layout>
 
-      <ConnectButton />
       <Routes>
         <Route path="/" element={<GetNotifs />} />
         <Route path="/data" element={<DataMarket />} />
@@ -30,7 +30,8 @@ const App = () => {
         <Route path="/graph" element={<Graph />} />
         <Route path="/market" element={<Market />} />
       </Routes>
-    </div>
+    
+    </Layout>
     </>
   );
 };
