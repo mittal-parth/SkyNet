@@ -16,7 +16,7 @@ contract Resource {
     address public EPNS_COMM_ADDRESS =
         0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa;
     address public CONTRACT_ADDRESS =
-        0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa;
+        0x3ACE6E6cae9208d581866B3fc961582Bb8111bb6;
     using Counters for Counters.Counter;
 
     enum ComputeResourceStatus {
@@ -197,7 +197,7 @@ contract Resource {
                         "+", // segregator
                         "New Job for training has been posted!", // this is notification title
                         "+", // segregator
-                        uintToStr(newId) // notification body
+                        "" // notification body
                     )
                 )
             )
@@ -494,6 +494,19 @@ contract Resource {
         }
 
         return activeComputeResources;
+    }
+
+    // Function to fetch Job objects for msg.sender
+    function fetchAllJobs() public view returns (Job[] memory) {
+        uint256 count = jobIdCounter.current();
+        Job[] memory myJobs = new Job[](count);
+
+        for (uint256 i = 1; i <= count; i++) {
+            Job storage job = jobObjectsById[i];
+            myJobs[i - 1] = job;
+        }
+
+        return myJobs;
     }
 
     // Helper functions
