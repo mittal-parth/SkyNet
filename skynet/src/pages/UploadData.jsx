@@ -21,56 +21,58 @@ export default function UploadData() {
 
  
   const handleSubmit = async (fileHash) => {
-    if(fileHash==null){
-      alert("Please upload a file")
-      return
-    }
-    write({
-      args: [dataDetails.title,fileHash,dataDetails.description,true,dataDetails.price],
-      from: walletClient.account.address
-    })
-    setdataHash(fileHash)
+      if(fileHash==null){
+        alert("Please upload a file")
+        return
+      }
+      write({
+        args: [dataDetails.title, fileHash, dataDetails.description, true, dataDetails.price],
+        from: walletClient.account.address
+      })
+      setdataHash(fileHash)
     };
 
   
 
   return (
     <FormPage
+    form={
+      <Form
+      walletClient = {walletClient}
+      handleSubmit={handleSubmit}
+      fields={[
+        {
+          label: "Data Name",
+          dataLabel: "title",
+          placeholder: `Sensor`,
+        },
+        {
+          label: "Price (in ethereum)",
+          dataLabel: "price",
+          type: "number",
+        },
+        {
+          label: "Description",
+          dataLabel: "description",
+          placeholder: "This is sensor data",
+        },
+        {
+          label: "Data Files",
+          dataLabel: "fileHash",
+          isFile: true,
+          setFile: setFile,
+          file : file,
+        },
+      ]}
+      setData={setDataDetails}
+      data={dataDetails}
+      />
+    }
     hash={dataHash}
-      form={
-        <Form
-        walletClient = {walletClient}
-          handleSubmit={handleSubmit}
-          fields={[
-            {
-              label: "Data Name",
-              dataLabel: "title",
-              placeholder: `Sensor`,
-            },
-            {
-              label: "Price (in ethereum)",
-              dataLabel: "price",
-              type: "number",
-            },
-            {
-              label: "Description",
-              dataLabel: "description",
-              placeholder: "This is sensor data",
-            },
-            {
-              label: "Data Files",
-              dataLabel: "fileHash",
-              isFile: true,
-              setFile: setFile,
-              file : file,
-            },
-          ]}
-          setData={setDataDetails}
-          data={dataDetails}
-        />
-      }
-      title="Upload your data"
-      text="Provide the details asked in the form"
+    navigationPage = {"/uploadmodel"}
+    title="Upload your data"
+    text="Provide the details asked in the form"
+    hashList = {[]}
       //   image={farmer}
       imageStyle="!max-w-[30vw]"
     />

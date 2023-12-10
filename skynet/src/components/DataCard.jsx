@@ -7,7 +7,6 @@ const skynetABI=ABI.abi;
 
 
 export default function DataCard({ dataObject, isOwner }) {
-  console.log("Data Object is ",dataObject)
   const { data, isLoading, isSuccess, write } = useContractWrite({
     address: CONTRACT_ADDRESS,
     abi: skynetABI,
@@ -33,7 +32,7 @@ export default function DataCard({ dataObject, isOwner }) {
           <div className="flex items-center">
             <SiSolidity color="white" />
             <div className="text-xl text-white font-semibold pb-1 pr-1">
-              {dataObject.price}
+              {dataObject.price.toString()}
             </div>
           </div>
         </div>

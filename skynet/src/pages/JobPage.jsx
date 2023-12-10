@@ -37,6 +37,14 @@ const N_WORKERS = 2;
 
 function JobPage() {
   const [trainedWeights, setTrainedWeights] = useState("");
+  const [pendingWeights, setPendingWeights] = useState(null)
+
+  useEffect(() => {
+    if (pendingWeights == null) return;
+    if (pendingWeights == 0) {
+      invoke('aggregator', { number: WORKERS.length })
+    }
+  }, [pendingWeights])
 
   const reducer = (state, action) => {
     const _inPipe = { ...state.inPipe };

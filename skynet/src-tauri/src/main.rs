@@ -54,6 +54,7 @@ fn aggregator(number: &str) -> String {
 
 #[tauri::command]
 fn deploy() -> String {
+    let python_command = Command::new("python3").arg("contract_model.py").output();
     let forge = Command::new(
         "forge create --rpc-url https://sepolia-rpc.scroll.io/ \
   --value 0.00000000002ether \

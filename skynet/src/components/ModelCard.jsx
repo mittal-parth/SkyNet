@@ -14,7 +14,7 @@ export default function ModelCard({ modelObject }) {
         <SiSolidity color="white" />
           
           <div className="text-xl font-semibold pb-1 pr-1 text-white">
-            {modelObject.price}
+            {modelObject.price.toString()}
           </div>
         </div>
       </div>
