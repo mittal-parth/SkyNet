@@ -11,21 +11,6 @@ import { useState } from "react";
 export default function Form({walletClient, handleSubmit, fields, setData, data }) {
   const fileHashes = [];
   const [dataFile, setDataFile] = useState(null);
-  const progressCallback = (progressData) => {
-    let percentageDone =
-      100 - (progressData?.total / progressData?.uploaded)?.toFixed(2);
-    console.log(percentageDone);
-  };
-
-  const signAuthMessage = async () => {
-    const signerAddress = walletClient;
-    const { message } = (
-      await lighthouse.getAuthMessage(signerAddress.account.address)
-    ).data;
-    // const signature = await getSignature(message);
-    const signature =  useSignMessage(message);
-    return { signature, signerAddress };
-  };
 
 
   async function submit() {

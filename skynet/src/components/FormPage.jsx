@@ -13,6 +13,7 @@ export default function FormPage({
   imageStyle,
   navigationPage,
   hashList,
+  isNext
 }) {
   const navigate = useNavigate();
   const navigateToNext = () => {
@@ -47,6 +48,17 @@ export default function FormPage({
         ) : (
           <></>
         )}
+        {
+          isNext?(
+            
+              <a onClick={navigateToNext}>
+              <div className="flex items-center mt-5 text-white  font-semibold data-card-3 rounded-lg p-2 px-3">
+                <div className="mr-2">Next</div>
+                <GrFormNextLink color={"white"} size={20} />
+              </div>
+            </a>
+          ):<></>
+        }
       </div>
       <div className="flex w-full max-w-[400px] mx-auto md:mx-0">{form}</div>
     </div>
