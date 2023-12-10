@@ -30,4 +30,4 @@ export const FLOW_RATE = 10;
 export const HOST = "localhost:3002"
 export const PIPELINE_ADDRESS = "0x3A7Ee68e244d7789754050cC9f75880324B827b7";
 
-export const CONTRACT_ADDRESS = "0xc9cabe2daa24eecd30738c30e8b7681300b82336"    
+export const CONTRACT_ADDRESS = "0xe778b31bce52f1f9dec9cd2fc036915aad03749b"
