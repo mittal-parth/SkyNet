@@ -60,7 +60,7 @@ fn deploy() -> String {
   --value 0.00000000002ether \
   --constructor-args 1696118400 \
   --private-key 0xabc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc1 \
-  --legacy contracts/Lock.sol:Lock",
+  --legacy Verifier.sol:Halo2Verifier",
     )
     .output();
     return "success".to_string();
