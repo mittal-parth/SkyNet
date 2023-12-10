@@ -31,20 +31,20 @@ const SimpleChatMessage = new protobuf.Type("SimpleChatMessage")
 
 let clientId = import.meta.env.VITE_ID;
 
-const WORKERS = ["0x8c42E233514011BfcFdF3e0c1258AfaDdAC5C191"];
-const EPOCHS = 1;
-const N_WORKERS = 2;
+const WORKERS = ["0xdc2b88b6eDcE14BB6726996213df264780e2e87c"];
+const EPOCHS = 10;
+const N_WORKERS = 1;
 
 function JobPage() {
   const [trainedWeights, setTrainedWeights] = useState("");
-  const [pendingWeights, setPendingWeights] = useState(null)
+  const [pendingWeights, setPendingWeights] = useState(null);
 
   useEffect(() => {
     if (pendingWeights == null) return;
     if (pendingWeights == 0) {
-      invoke('aggregator', { number: WORKERS.length })
+      invoke("aggregator", { number: WORKERS.length });
     }
-  }, [pendingWeights])
+  }, [pendingWeights]);
 
   const reducer = (state, action) => {
     const _inPipe = { ...state.inPipe };
@@ -275,11 +275,12 @@ function JobPage() {
       <header className="App-header">
         <div className="flex justify-center">
           <img src={wakuLogo} alt="Waku" class="w-16 h-6 me-2 -ms-1" />
-          <p className="flex text-white font-poppins text-xl justify-center">: {wakuStatus}</p>
+          <p className="flex text-white font-poppins text-xl justify-center">
+            : {wakuStatus}
+          </p>
         </div>
         <div className="flex my-3 justify-center">
-        <input type="text" ref={dstId} />
-
+          <input type="text" ref={dstId} />
         </div>
 
         <Graph />
@@ -288,12 +289,23 @@ function JobPage() {
           <span class="text-base font-medium  font-poppins text-xl text-white-700 text-white">
             Progress
           </span>
-          <div class="w-1/2 bg-gray-200 rounded-full h-4 dark:bg-gray-700">
-            <div
+          {/* <div class="w-1/2 bg-gray-200 rounded-full h-4 dark:bg-gray-700"> */}
+          {/* <div
               class="bg-purple-800 h-2.5 rounded-full"
-              style={{ width: state.messages.length / (N_WORKERS * EPOCHS) }}
-            ></div>
-          </div>
+              style={{
+                width: (state.messages.length * 100) / (N_WORKERS * EPOCHS),
+              }}
+            ></div> */}
+          <progress
+            id="file"
+            value={(state.messages.length * 100) / (N_WORKERS * EPOCHS)}
+            max="100"
+            className="w-1/2 rounded bg-purple-800"
+          >
+            {" "}
+            32%{" "}
+          </progress>
+          {/* </div> */}
         </div>
 
         {/* <ul>
@@ -336,8 +348,8 @@ function JobPage() {
             }}
             disabled={wakuStatus !== "Ready"}
           >
-            <div className="flex text-black">
-              <VscDebugStart size="1rem" className="mr-2"/>
+            <div className="flex">
+              <VscDebugStart size="1rem" className="mr-2" />
               Start
             </div>
           </button>
@@ -346,9 +358,14 @@ function JobPage() {
             type="button"
             class="text-black bg-gradient-to-r from-yellow-100 via-yellow-200 to-yellow-300 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:focus:ring-yellow-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
           >
-            <div className="flex">
+            <div
+              className="flex"
+              onClick={() => {
+                involke;
+              }}
+            >
               <img src={scroll} alt="Scroll" class="w-6 h-6 me-2 -ms-1" />
-              Verify Proof on Chain
+              Deploy Verifier Contract on Scroll zkEVM
             </div>
           </button>
         </div>
