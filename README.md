@@ -16,6 +16,17 @@ When Requirements are met, the task is assigned to all participants and logged i
 The workflow is managed using Waku's P2P stack to ensure a reliable mode of communication which enables end-to-end delivery confirmations and uniquely identifies nodes in the subnet. It is used in the exchange of weights during the training process without revealing the same to anyone else.
 Every model trained has a zkProof Verifier Contract generated. Proofs are generated for every worker running the model. These proofs can be verified by the contract deployed on the Scroll zkEVM.
 
+## Tools and Libraries
+1) Waku
+2) Arbitrum
+3) Scroll
+4) Lighthouse.storage
+5) Push
+6) ezkl
+7) Tauri
+8) Wagmi
+9) Rainbow Wallet
+
 ## Challenges we ran into
 During the course of our project development, we encountered several challenges that required thoughtful resolution:
 
@@ -40,3 +51,4 @@ Overcoming difficulties in file uploads through Lighthouse emerged as a pivotal 
 ![image](https://github.com/mittal-parth/SkyNet/assets/75673036/06cb3456-b257-4ecb-82b8-7e54ad0e84ba)
 ![image](https://github.com/mittal-parth/SkyNet/assets/75673036/83a0d6dd-3ccb-4797-971e-5ba1a7b864ec)
 
+ 
