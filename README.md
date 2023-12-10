@@ -32,6 +32,7 @@ Overcoming difficulties in file uploads through Lighthouse emerged as a pivotal 
 ![WhatsApp Image 2023-12-10 at 07 14 24](https://github.com/mittal-parth/SkyNet/assets/72497928/cdecc03a-9944-4507-8166-af737e020c88)
 
 ## Images
+![image](https://github.com/mittal-parth/SkyNet/assets/75673036/0aebc0fd-f1c5-4db6-aa32-9daa62a42ad9)
 ![image](https://github.com/mittal-parth/SkyNet/assets/75673036/3bb9848b-b2b7-4961-9daa-e175fcb2d573)
 ![image](https://github.com/mittal-parth/SkyNet/assets/75673036/a8a8457d-2824-4f4a-9953-5716b15b64fe)
 ![image](https://github.com/mittal-parth/SkyNet/assets/75673036/06cb3456-b257-4ecb-82b8-7e54ad0e84ba)
