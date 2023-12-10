@@ -13,6 +13,10 @@ import {
 } from "@waku/sdk";
 import { useAccount } from "wagmi";
 
+import Graph from "../components/Graph";
+import { scroll, wakuLogo } from "../assets";
+import { VscDebugStart } from "react-icons/vsc";
+
 const ContentTopic = `/skynet/1/chat/proto`;
 const Encoder = createEncoder({ contentTopic: ContentTopic });
 const Decoder = createDecoder(ContentTopic);
@@ -261,25 +265,26 @@ function JobPage() {
   return (
     <div className="App">
       <header className="App-header">
-        <p>{wakuStatus}</p>
+        <div className="flex justify-center">
+          <img src={wakuLogo} alt="Waku" class="w-16 h-6 me-2 -ms-1" />
+          <p className="flex justify-center">: {wakuStatus}</p>
+        </div>
         <input type="text" ref={dstId} />
-        <button onClick={sendMessageOnClick} disabled={wakuStatus !== "Ready"}>
-          Send Message
-        </button>
-        <div class="flex justify-between mb-1">
+
+        <Graph />
+
+        <div class="flex justify-evenly mt-12">
           <span class="text-base font-medium text-blue-700 dark:text-white">
             Progress
           </span>
-          <span class="text-sm font-medium text-blue-700 dark:text-white">
-            {state.messages.length / (N_WORKERS * EPOCHS)}
-          </span>
+          <div class="w-1/2 bg-gray-200 rounded-full h-4 dark:bg-gray-700">
+            <div
+              class="bg-purple-800 h-2.5 rounded-full"
+              style={{ width: state.messages.length / (N_WORKERS * EPOCHS) }}
+            ></div>
+          </div>
         </div>
-        <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-          <div
-            class="bg-blue-600 h-2.5 rounded-full"
-            style={{ width: state.messages.length / (N_WORKERS * EPOCHS) }}
-          ></div>
-        </div>
+
         {/* <ul>
           {state.messages.map((msg) => {
             return (
@@ -290,34 +295,52 @@ function JobPage() {
           })}
         </ul> */}
         {/* <p>In pipe: {Array.from(Object.keys(state.inPipe)).join(" ")}</p> */}
-        <button
-          onClick={async () => {
-            for (let ep = 0; ep < EPOCHS; ep++) {
-              let initialWeights = {};
-              if (ep == 0) {
-                initialWeights = await invoke("initialize");
-                console.log(initialWeights);
-              }
-              WORKERS.map(async (workerId, _) => {
-                dispatch({
-                  type: "SEND_MESSAGE",
-                  dstId: workerId,
-                  body: {
-                    weights: initialWeights,
-                  },
-                  waku: waku,
+
+        <div className="flex justify-center mt-10">
+          <button
+            type="button"
+            class="text-gray-900 bg-gradient-to-r from-purple-200 via-purple-400 to-purple-500 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+            onClick={async () => {
+              for (let ep = 0; ep < EPOCHS; ep++) {
+                let initialWeights = {};
+                if (ep == 0) {
+                  initialWeights = await invoke("initialize");
+                  console.log(initialWeights);
+                }
+                WORKERS.map(async (workerId, _) => {
+                  dispatch({
+                    type: "SEND_MESSAGE",
+                    dstId: workerId,
+                    body: {
+                      weights: initialWeights,
+                    },
+                    waku: waku,
+                  });
                 });
-              });
-              await sleep(5000);
-              while (state.inPipe.length) {
-                await sleep(1000);
+                await sleep(5000);
+                while (state.inPipe.length) {
+                  await sleep(1000);
+                }
               }
-            }
-          }}
-          disabled={wakuStatus !== "Ready"}
-        >
-          Start
-        </button>
+            }}
+            disabled={wakuStatus !== "Ready"}
+          >
+            <div className="flex">
+              <VscDebugStart size="1rem" className="mr-2"/>
+              Start
+            </div>
+          </button>
+
+          <button
+            type="button"
+            class="text-gray-900 bg-gradient-to-r from-yellow-100 via-yellow-200 to-yellow-300 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-yellow-300 dark:focus:ring-yellow-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+          >
+            <div className="flex">
+              <img src={scroll} alt="Scroll" class="w-6 h-6 me-2 -ms-1" />
+              Verify Proof on Chain
+            </div>
+          </button>
+        </div>
       </header>
     </div>
   );

@@ -27,6 +27,8 @@ import dataPic from "./dataPic.png";
 import model from "./model.png"
 import configuration from "./configuration.png"
 import cloudUpload from "./cloudUpload.png"
+import scroll from "./scroll.png"
+import wakuLogo from "./waku-white.png"
 export {
   airbnb,
   bill,
@@ -57,4 +59,6 @@ export {
   model,
   configuration,
   cloudUpload,
+  scroll,
+  wakuLogo
 };
