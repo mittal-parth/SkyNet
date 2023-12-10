@@ -12,7 +12,7 @@ export default function Layout({ children }) {
             <ConnectButton />
             <Navbar />
           </div>
-            <main className="h-full w-full flex justify-center mb-24 ">
+            <main className="h-full w-full flex justify-center  ">
               <div className=" h-full w-full">
                 {children}
               </div>
